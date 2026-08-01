@@ -1,0 +1,25 @@
+import type { LocaleConfig } from '../../core/types';
+
+export const cs: LocaleConfig = {
+  code: 'cs',
+  title: 'Vyberte datum',
+  monthsLong: ['leden', 'únor', 'březen', 'duben', 'květen', 'červen', 'červenec', 'srpen', 'září', 'říjen', 'listopad', 'prosinec'],
+  monthsShort: ['led', 'úno', 'bře', 'dub', 'kvě', 'čvn', 'čvc', 'srp', 'zář', 'říj', 'lis', 'pro'],
+  weekdaysLong: ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'],
+  weekdaysShort: ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'],
+  weekdaysNarrow: ['N', 'P', 'Ú', 'S', 'Č', 'P', 'S'],
+  weekStart: 1,
+  todayLabel: 'Dnes',
+  clearLabel: 'Vymazat',
+  confirmLabel: 'OK',
+  cancelLabel: 'Zrušit',
+  prevMonthLabel: 'Předchozí měsíc',
+  nextMonthLabel: 'Další měsíc',
+  prevYearLabel: 'Předchozí rok',
+  nextYearLabel: 'Další rok',
+  prevDecadeLabel: 'Předchozí dekáda',
+  nextDecadeLabel: 'Další dekáda',
+  monthPickerLabel: 'Vybrat měsíc',
+  yearPickerLabel: 'Vybrat rok',
+  weekNumberLabel: 'Týden',
+};

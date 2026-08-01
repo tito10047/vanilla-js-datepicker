@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vanilla-js-datepicker — Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #f5f5f5; }
+    h1 { margin-bottom: 2rem; }
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+    .card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .card h2 { font-size: 1rem; margin-bottom: .75rem; color: #333; }
+    input { width: 100%; box-sizing: border-box; padding: .5rem .75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+    input.vdp-input--active { border-color: #3b82f6; outline: 2px solid #93c5fd; }
+    input.vdp-invalid { border-color: #ef4444; }
+    #log { margin-top: 1rem; font-size: .8rem; color: #555; max-height: 80px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>vanilla-js-datepicker</h1>
+
+  <div class="demo-grid">
+    <!-- Card 1: Basic single -->
+    <div class="card" id="card-basic">
+      <h2>1. Basic (single)</h2>
+      <input id="dp-basic" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 2: async onCellRender -->
+    <div class="card" id="card-async">
+      <h2>2. Async onCellRender</h2>
+      <input id="dp-async" type="text" placeholder="YYYY-MM-DD" />
+      <div id="log-async"></div>
+    </div>
+
+    <!-- Card 3: Range mode -->
+    <div class="card" id="card-range">
+      <h2>3. Range mode</h2>
+      <input id="dp-range" type="text" placeholder="range" />
+    </div>
+
+    <!-- Card 4: Multiple mode -->
+    <div class="card" id="card-multi">
+      <h2>4. Multiple mode</h2>
+      <input id="dp-multi" type="text" placeholder="multiple" />
+    </div>
+
+    <!-- Card 5: onOpen callback -->
+    <div class="card" id="card-onopen">
+      <h2>5. onOpen callback</h2>
+      <input id="dp-onopen" type="text" placeholder="YYYY-MM-DD" />
+      <div id="log-onopen"></div>
+    </div>
+
+    <!-- Card 6: clickable=false via onCellRender -->
+    <div class="card" id="card-disabled">
+      <h2>6. Disabled via onCellRender</h2>
+      <input id="dp-disabled" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 7: Slow async (for race guard e2e) -->
+    <div class="card" id="card-slow">
+      <h2>7. Slow async render (race guard)</h2>
+      <input id="dp-slow" type="text" placeholder="YYYY-MM-DD" />
+      <div id="log-slow"></div>
+    </div>
+
+    <!-- Card 8: Footer buttons -->
+    <div class="card" id="card-footer">
+      <h2>8. Footer buttons</h2>
+      <input id="dp-footer" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 9: Custom classNames (Tailwind-style) -->
+    <div class="card" id="card-classnames">
+      <h2>9. Custom classNames</h2>
+      <input id="dp-classnames" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 10: minDate / maxDate -->
+    <div class="card" id="card-minmax">
+      <h2>10. minDate / maxDate</h2>
+      <input id="dp-minmax" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 11: Week numbers -->
+    <div class="card" id="card-weeknums">
+      <h2>11. Week numbers (ISO)</h2>
+      <input id="dp-weeknums" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <!-- Card 12: Dark theme -->
+    <div class="card" id="card-dark" style="background:#1e293b; color: white;">
+      <h2 style="color:white">12. Dark theme</h2>
+      <input id="dp-dark" type="text" placeholder="YYYY-MM-DD" />
+    </div>
+  </div>
+
+  <script type="module">
+    import { Datepicker } from '../src/index.ts';
+
+    // Card 1 — Basic
+    window.__dp1 = new Datepicker('#dp-basic', { format: 'YYYY-MM-DD' });
+
+    // Card 2 — Async onCellRender
+    const logAsync = document.getElementById('log-async');
+    window.__dp2 = new Datepicker('#dp-async', {
+      format: 'YYYY-MM-DD',
+      value: '2026-07-15',
+      onCellRender: async (date) => {
+        await new Promise(r => setTimeout(r, 50));
+        if (date.getDate() === 15 && date.getMonth() === 6) {
+          logAsync.textContent = 'onCellRender applied badge to 15th';
+          return { badge: '★', className: 'highlighted-15' };
+        }
+        return {};
+      },
+    });
+
+    // Card 3 — Range
+    window.__dp3 = new Datepicker('#dp-range', { format: 'YYYY-MM-DD', mode: 'range' });
+
+    // Card 4 — Multiple
+    window.__dp4 = new Datepicker('#dp-multi', { format: 'YYYY-MM-DD', mode: 'multiple', maxSelections: 3 });
+
+    // Card 5 — onOpen
+    const logOnopen = document.getElementById('log-onopen');
+    window.__dp5 = new Datepicker('#dp-onopen', {
+      format: 'YYYY-MM-DD',
+      onOpen: async ({ from, to }) => {
+        logOnopen.textContent = `Visible: ${from.toLocaleDateString()} – ${to.toLocaleDateString()}`;
+        logOnopen.setAttribute('data-open-called', 'true');
+      },
+    });
+
+    // Card 6 — Disabled via onCellRender
+    window.__dp6 = new Datepicker('#dp-disabled', {
+      format: 'YYYY-MM-DD',
+      value: '2026-07-15',
+      onCellRender: (date) => {
+        if (date.getDay() === 0 || date.getDay() === 6) {
+          return { clickable: false, className: 'weekend-disabled' };
+        }
+        return {};
+      },
+    });
+
+    // Card 7 — Slow async (race guard test)
+    const logSlow = document.getElementById('log-slow');
+    let slowDelay = 2000;
+    window.__setSlowDelay = (ms) => { slowDelay = ms; };
+    window.__dp7 = new Datepicker('#dp-slow', {
+      format: 'YYYY-MM-DD',
+      value: '2026-07-15',
+      onCellRender: async (date, ctx) => {
+        await new Promise(r => setTimeout(r, slowDelay));
+        if (ctx.inMonth) {
+          return { className: 'slow-cell-rendered' };
+        }
+        return {};
+      },
+    });
+
+    // Card 8 — Footer buttons
+    window.__dp8 = new Datepicker('#dp-footer', {
+      format: 'YYYY-MM-DD',
+      showTodayButton: true,
+      showClearButton: true,
+      showConfirmButton: true,
+      showCancelButton: true,
+    });
+
+    // Card 9 — Custom classNames
+    window.__dp9 = new Datepicker('#dp-classnames', {
+      format: 'YYYY-MM-DD',
+      classNames: {
+        dropdown: 'tw-dropdown',
+        cell: 'tw-cell',
+        cellSelected: 'tw-cell-selected',
+        cellToday: 'tw-cell-today',
+      },
+    });
+
+    // Card 10 — minDate/maxDate
+    window.__dp10 = new Datepicker('#dp-minmax', {
+      format: 'YYYY-MM-DD',
+      minDate: '2026-07-10',
+      maxDate: '2026-07-20',
+      value: '2026-07-15',
+    });
+
+    // Card 11 — Week numbers
+    window.__dp11 = new Datepicker('#dp-weeknums', {
+      format: 'YYYY-MM-DD',
+      showWeekNumbers: true,
+      weekNumberSystem: 'iso',
+    });
+
+    // Card 12 — Dark theme
+    window.__dp12 = new Datepicker('#dp-dark', {
+      format: 'YYYY-MM-DD',
+      theme: 'dark',
+    });
+  </script>
+</body>
+</html>

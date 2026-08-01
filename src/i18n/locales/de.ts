@@ -1,0 +1,25 @@
+import type { LocaleConfig } from '../../core/types';
+
+export const de: LocaleConfig = {
+  code: 'de',
+  title: 'Datum auswählen',
+  monthsLong: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+  monthsShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+  weekdaysLong: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+  weekdaysShort: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+  weekdaysNarrow: ['S', 'M', 'D', 'M', 'D', 'F', 'S'],
+  weekStart: 1,
+  todayLabel: 'Heute',
+  clearLabel: 'Löschen',
+  confirmLabel: 'OK',
+  cancelLabel: 'Abbrechen',
+  prevMonthLabel: 'Vorheriger Monat',
+  nextMonthLabel: 'Nächster Monat',
+  prevYearLabel: 'Vorheriges Jahr',
+  nextYearLabel: 'Nächstes Jahr',
+  prevDecadeLabel: 'Vorheriges Jahrzehnt',
+  nextDecadeLabel: 'Nächstes Jahrzehnt',
+  monthPickerLabel: 'Monat auswählen',
+  yearPickerLabel: 'Jahr auswählen',
+  weekNumberLabel: 'Woche',
+};

@@ -1,0 +1,25 @@
+import type { LocaleConfig } from '../../core/types';
+
+export const sk: LocaleConfig = {
+  code: 'sk',
+  title: 'Vyber dátum',
+  monthsLong: ['január', 'február', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december'],
+  monthsShort: ['jan', 'feb', 'mar', 'apr', 'máj', 'jún', 'júl', 'aug', 'sep', 'okt', 'nov', 'dec'],
+  weekdaysLong: ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'],
+  weekdaysShort: ['ne', 'po', 'ut', 'st', 'št', 'pi', 'so'],
+  weekdaysNarrow: ['N', 'P', 'U', 'S', 'Š', 'P', 'S'],
+  weekStart: 1,
+  todayLabel: 'Dnes',
+  clearLabel: 'Vymazať',
+  confirmLabel: 'OK',
+  cancelLabel: 'Zrušiť',
+  prevMonthLabel: 'Predchádzajúci mesiac',
+  nextMonthLabel: 'Nasledujúci mesiac',
+  prevYearLabel: 'Predchádzajúci rok',
+  nextYearLabel: 'Nasledujúci rok',
+  prevDecadeLabel: 'Predchádzajúca dekáda',
+  nextDecadeLabel: 'Nasledujúca dekáda',
+  monthPickerLabel: 'Vybrať mesiac',
+  yearPickerLabel: 'Vybrať rok',
+  weekNumberLabel: 'Týždeň',
+};

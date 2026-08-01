@@ -1,0 +1,496 @@
+/* vanilla-js-datepicker — default stylesheet */
+
+/* ─── Custom properties (light theme) ─────────────────────────────────────── */
+:root {
+  --vdp-z: 1000;
+  --vdp-font: system-ui, -apple-system, sans-serif;
+  --vdp-radius: 10px;
+  --vdp-shadow: 0 8px 32px rgba(0, 0, 0, .15);
+  --vdp-border: #dde1ef;
+  --vdp-bg: #ffffff;
+  --vdp-text: #1a202c;
+  --vdp-muted: #718096;
+  --vdp-accent: #3b82f6;
+  --vdp-accent-text: #ffffff;
+  --vdp-accent-hover: #2563eb;
+  --vdp-hover-bg: #f0f4ff;
+  --vdp-today-border: #3b82f6;
+  --vdp-range-bg: #dbeafe;
+  --vdp-range-text: #1e40af;
+  --vdp-out-text: #c1c7d0;
+  --vdp-disabled-text: #c1c7d0;
+  --vdp-disabled-bg: transparent;
+  --vdp-weekend-text: #e53e3e;
+  --vdp-highlight-bg: #fefce8;
+  --vdp-highlight-border: #fbbf24;
+  --vdp-header-bg: transparent;
+  --vdp-header-text: #1a202c;
+  --vdp-btn-bg: transparent;
+  --vdp-btn-border: #dde1ef;
+  --vdp-btn-text: #374151;
+  --vdp-btn-hover: #f3f4f6;
+  --vdp-footer-border: #f0f0f5;
+  --vdp-anim-dur: 150ms;
+}
+
+/* ─── Dark theme ───────────────────────────────────────────────────────────── */
+[data-vdp-theme="dark"],
+.vdp-dropdown[data-vdp-theme="dark"] {
+  --vdp-bg: #1e2433;
+  --vdp-text: #e2e8f0;
+  --vdp-muted: #94a3b8;
+  --vdp-border: #2d3748;
+  --vdp-hover-bg: #2d3748;
+  --vdp-out-text: #4a5568;
+  --vdp-disabled-text: #4a5568;
+  --vdp-weekend-text: #fc8181;
+  --vdp-range-bg: #1e3a5f;
+  --vdp-range-text: #93c5fd;
+  --vdp-header-text: #e2e8f0;
+  --vdp-btn-border: #2d3748;
+  --vdp-btn-text: #e2e8f0;
+  --vdp-btn-hover: #2d3748;
+  --vdp-footer-border: #2d3748;
+  --vdp-highlight-bg: #3b2f00;
+  --vdp-highlight-border: #f59e0b;
+}
+
+/* Auto theme — respects OS preference */
+@media (prefers-color-scheme: dark) {
+  [data-vdp-theme="auto"] {
+    --vdp-bg: #1e2433;
+    --vdp-text: #e2e8f0;
+    --vdp-muted: #94a3b8;
+    --vdp-border: #2d3748;
+    --vdp-hover-bg: #2d3748;
+    --vdp-out-text: #4a5568;
+    --vdp-disabled-text: #4a5568;
+    --vdp-weekend-text: #fc8181;
+    --vdp-range-bg: #1e3a5f;
+    --vdp-range-text: #93c5fd;
+    --vdp-header-text: #e2e8f0;
+    --vdp-btn-border: #2d3748;
+    --vdp-btn-text: #e2e8f0;
+    --vdp-btn-hover: #2d3748;
+    --vdp-footer-border: #2d3748;
+    --vdp-highlight-bg: #3b2f00;
+    --vdp-highlight-border: #f59e0b;
+  }
+}
+
+/* ─── Dropdown container ───────────────────────────────────────────────────── */
+.vdp-dropdown {
+  position: absolute;
+  z-index: var(--vdp-z, 1000);
+  background: var(--vdp-bg);
+  color: var(--vdp-text);
+  border: 1px solid var(--vdp-border);
+  border-radius: var(--vdp-radius);
+  box-shadow: var(--vdp-shadow);
+  font-family: var(--vdp-font);
+  font-size: 14px;
+  min-width: 280px;
+  user-select: none;
+  outline: none;
+}
+
+/* ─── Animations ───────────────────────────────────────────────────────────── */
+[data-animation="fade"].vdp-dropdown {
+  animation: vdp-fade-in var(--vdp-anim-dur) ease;
+}
+
+[data-animation="slide"].vdp-dropdown {
+  animation: vdp-slide-in var(--vdp-anim-dur) ease;
+}
+
+[data-animation="none"].vdp-dropdown {
+  animation: none;
+}
+
+@keyframes vdp-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vdp-slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vdp-dropdown {
+    animation: none !important;
+  }
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+.vdp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 6px;
+  background: var(--vdp-header-bg);
+  border-bottom: 1px solid var(--vdp-border);
+}
+
+.vdp-header-labels {
+  display: flex;
+  gap: 4px;
+}
+
+.vdp-btn-prev,
+.vdp-btn-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: var(--vdp-btn-bg);
+  color: var(--vdp-btn-text);
+  cursor: pointer;
+  transition: background var(--vdp-anim-dur);
+}
+
+.vdp-btn-prev:hover,
+.vdp-btn-next:hover {
+  background: var(--vdp-btn-hover);
+}
+
+.vdp-btn-prev:focus-visible,
+.vdp-btn-next:focus-visible {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 2px;
+}
+
+.vdp-btn-month,
+.vdp-btn-year {
+  border: none;
+  background: none;
+  color: var(--vdp-header-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background var(--vdp-anim-dur);
+}
+
+.vdp-btn-month:hover,
+.vdp-btn-year:hover {
+  background: var(--vdp-hover-bg);
+}
+
+.vdp-decade-label {
+  font-size: 13px;
+  color: var(--vdp-muted);
+  padding: 4px 8px;
+}
+
+/* ─── Body ─────────────────────────────────────────────────────────────────── */
+.vdp-body {
+  padding: 8px 12px 12px;
+}
+
+/* ─── Weekday header row ───────────────────────────────────────────────────── */
+.vdp-weekday-row {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.vdp-weekday-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vdp-muted);
+  padding: 4px 0;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+/* ─── Day grid ─────────────────────────────────────────────────────────────── */
+.vdp-day-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vdp-grid-row {
+  display: flex;
+  gap: 2px;
+}
+
+/* ─── Cells ────────────────────────────────────────────────────────────────── */
+.vdp-cell {
+  flex: 1;
+  aspect-ratio: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--vdp-text);
+  font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  transition: background var(--vdp-anim-dur), color var(--vdp-anim-dur);
+}
+
+.vdp-cell:hover:not(.vdp-cell--disabled):not(.vdp-cell--out) {
+  background: var(--vdp-hover-bg);
+}
+
+.vdp-cell:focus-visible {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+.vdp-cell--out {
+  color: var(--vdp-out-text);
+  cursor: default;
+}
+
+.vdp-cell--today {
+  font-weight: 700;
+}
+
+.vdp-cell--today::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--vdp-accent);
+}
+
+.vdp-cell--selected {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+  font-weight: 600;
+}
+
+.vdp-cell--selected:hover {
+  background: var(--vdp-accent-hover);
+}
+
+.vdp-cell--selected.vdp-cell--today::after {
+  background: var(--vdp-accent-text);
+}
+
+.vdp-cell--in-range {
+  background: var(--vdp-range-bg);
+  color: var(--vdp-range-text);
+  border-radius: 0;
+}
+
+.vdp-cell--range-start {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+  border-radius: 6px 0 0 6px;
+}
+
+.vdp-cell--range-end {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+  border-radius: 0 6px 6px 0;
+}
+
+.vdp-cell--range-start.vdp-cell--range-end {
+  border-radius: 6px;
+}
+
+.vdp-cell--weekend {
+  color: var(--vdp-weekend-text);
+}
+
+.vdp-cell--disabled,
+.vdp-cell--disabled:hover {
+  color: var(--vdp-disabled-text);
+  background: var(--vdp-disabled-bg);
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.vdp-cell--highlighted {
+  background: var(--vdp-highlight-bg);
+  box-shadow: inset 0 0 0 1px var(--vdp-highlight-border);
+}
+
+/* ─── Badge ────────────────────────────────────────────────────────────────── */
+.vdp-badge {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--vdp-accent);
+  font-weight: 700;
+}
+
+/* ─── Week number column ───────────────────────────────────────────────────── */
+.vdp-wn-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--vdp-muted);
+  font-weight: 500;
+}
+
+/* ─── Month grid ───────────────────────────────────────────────────────────── */
+.vdp-month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.vdp-month-cell {
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--vdp-text);
+  font-size: 13px;
+  padding: 10px 4px;
+  cursor: pointer;
+  transition: background var(--vdp-anim-dur);
+  text-align: center;
+}
+
+.vdp-month-cell:hover {
+  background: var(--vdp-hover-bg);
+}
+
+.vdp-month-cell:focus-visible {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 1px;
+}
+
+.vdp-month-cell.vdp-cell--selected {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+}
+
+/* ─── Year grid ────────────────────────────────────────────────────────────── */
+.vdp-year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.vdp-year-cell {
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--vdp-text);
+  font-size: 13px;
+  padding: 10px 4px;
+  cursor: pointer;
+  transition: background var(--vdp-anim-dur);
+  text-align: center;
+}
+
+.vdp-year-cell:hover {
+  background: var(--vdp-hover-bg);
+}
+
+.vdp-year-cell:focus-visible {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 1px;
+}
+
+.vdp-year-cell.vdp-cell--selected {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+}
+
+/* ─── Footer ───────────────────────────────────────────────────────────────── */
+.vdp-footer {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 12px;
+  border-top: 1px solid var(--vdp-footer-border);
+}
+
+.vdp-btn {
+  flex: 1;
+  border: 1px solid var(--vdp-btn-border);
+  border-radius: 6px;
+  background: var(--vdp-btn-bg);
+  color: var(--vdp-btn-text);
+  font-size: 13px;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background var(--vdp-anim-dur);
+  text-align: center;
+}
+
+.vdp-btn:hover {
+  background: var(--vdp-btn-hover);
+}
+
+.vdp-btn:focus-visible {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 1px;
+}
+
+.vdp-btn-confirm {
+  background: var(--vdp-accent);
+  color: var(--vdp-accent-text);
+  border-color: var(--vdp-accent);
+  font-weight: 600;
+}
+
+.vdp-btn-confirm:hover {
+  background: var(--vdp-accent-hover);
+  border-color: var(--vdp-accent-hover);
+}
+
+/* ─── Input states ─────────────────────────────────────────────────────────── */
+.vdp-input--active {
+  /* Override in consuming app or use classNames option */
+}
+
+.vdp-invalid {
+  /* Override in consuming app or use classNames option */
+}
+
+/* ─── Placement variants ───────────────────────────────────────────────────── */
+.vdp-dropdown[data-placement="top"] {
+  animation-name: vdp-slide-up;
+}
+
+@keyframes vdp-slide-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Accessibility — screen-reader live region ────────────────────────────── */
+.vdp-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Focus-focused cell highlight ────────────────────────────────────────── */
+.vdp-cell--focused {
+  outline: 2px solid var(--vdp-accent);
+  outline-offset: 1px;
+}
