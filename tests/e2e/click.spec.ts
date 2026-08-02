@@ -126,7 +126,8 @@ test.describe('clicking date cells', () => {
     // Should close and have today's date
     await expect(dropdown).not.toBeVisible({ timeout: 2000 });
     const value = await input.inputValue();
-    // Today is 2026-08-01
-    expect(value).toBe('2026-08-01');
+    const today = new Date();
+    const expected = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    expect(value).toBe(expected);
   });
 });
