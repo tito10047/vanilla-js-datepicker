@@ -3,7 +3,7 @@
 Use `onCellRender` to asynchronously customise individual day cells — perfect for loading availability data from an API.
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
 const dp = new Datepicker('#dp', {
   locale: 'en',

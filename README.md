@@ -1,8 +1,8 @@
-# vanilla-js-datepicker
+# @tito10047/vanilla-js-datepicker
 
 [![Test](https://github.com/tito10047/vanilla-js-datepicker/actions/workflows/test.yml/badge.svg)](https://github.com/tito10047/vanilla-js-datepicker/actions/workflows/test.yml)
 [![Deploy Docs & Demo](https://github.com/tito10047/vanilla-js-datepicker/actions/workflows/docs.yml/badge.svg)](https://github.com/tito10047/vanilla-js-datepicker/actions/workflows/docs.yml)
-[![npm version](https://img.shields.io/npm/v/vanilla-js-datepicker.svg)](https://www.npmjs.com/package/vanilla-js-datepicker)
+[![npm version](https://img.shields.io/npm/v/@tito10047/vanilla-js-datepicker.svg)](https://www.npmjs.com/package/@tito10047/vanilla-js-datepicker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **[📖 Documentation](https://tito10047.github.io/vanilla-js-datepicker/) · [▶ Live Demo](https://tito10047.github.io/vanilla-js-datepicker/demo/)**
@@ -29,14 +29,14 @@ Lightweight, dependency-free date picker for vanilla JavaScript and TypeScript.
 ## Installation
 
 ```bash
-npm install vanilla-js-datepicker
+npm install @tito10047/vanilla-js-datepicker
 ```
 
 ## Quick start
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker'
-import 'vanilla-js-datepicker/dist/datepicker.css'
+import { Datepicker } from '@tito10047/vanilla-js-datepicker'
+import '@tito10047/vanilla-js-datepicker/dist/datepicker.css'
 
 const dp = new Datepicker('#departure', {
   format: 'DD.MM.YYYY',
@@ -56,9 +56,9 @@ const dp = new Datepicker('#departure', {
 ## CDN (no build step)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-js-datepicker/dist/datepicker.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-datepicker/dist/datepicker.css" />
 <script type="module">
-  import { Datepicker } from 'https://cdn.jsdelivr.net/npm/vanilla-js-datepicker/dist/datepicker.esm.js'
+  import { Datepicker } from 'https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-datepicker/dist/datepicker.esm.js'
   new Datepicker('#date', { showTodayButton: true })
 </script>
 ```

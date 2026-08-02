@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: vanilla-js-datepicker
+  name: "@tito10047/vanilla-js-datepicker"
   text: Zero-dependency datepicker
   tagline: Lightweight, accessible, fully typed TypeScript datepicker — no frameworks needed.
   actions:

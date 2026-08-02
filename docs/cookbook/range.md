@@ -5,7 +5,7 @@
 ```
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
 const dp = new Datepicker('#dp-range', {
   mode: 'range',

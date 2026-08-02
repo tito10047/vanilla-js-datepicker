@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-npm install vanilla-js-datepicker
+npm install @tito10047/vanilla-js-datepicker
 ```
 
 ## Basic usage
@@ -13,8 +13,8 @@ npm install vanilla-js-datepicker
 ```
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
-import 'vanilla-js-datepicker/dist/datepicker.css';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
+import '@tito10047/vanilla-js-datepicker/dist/datepicker.css';
 
 const dp = new Datepicker('#dp', {
   format: 'YYYY-MM-DD',
@@ -25,8 +25,8 @@ const dp = new Datepicker('#dp', {
 ## CDN (UMD)
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/vanilla-js-datepicker/dist/datepicker.css" />
-<script src="https://unpkg.com/vanilla-js-datepicker/dist/datepicker.umd.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@tito10047/vanilla-js-datepicker/dist/datepicker.css" />
+<script src="https://unpkg.com/@tito10047/vanilla-js-datepicker/dist/datepicker.umd.js"></script>
 <script>
   const dp = new VanillaDatepicker.Datepicker('#dp', { locale: 'en' });
 </script>
@@ -39,7 +39,7 @@ const dp = new Datepicker('#dp', {
 ```
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 Datepicker.autoInit(); // initialises all [data-datepicker] elements
 ```
 

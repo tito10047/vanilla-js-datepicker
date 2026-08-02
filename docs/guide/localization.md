@@ -23,7 +23,7 @@ await dp.refresh(); // re-renders the open calendar
 ## Custom locale
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
 Datepicker.registerLocale('fr', {
   monthsLong: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],

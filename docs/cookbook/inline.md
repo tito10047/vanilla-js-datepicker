@@ -7,7 +7,7 @@ Render the calendar permanently inside a container instead of a floating dropdow
 ```
 
 ```ts
-import { Datepicker } from 'vanilla-js-datepicker';
+import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
 // For inline mode, pass a hidden input or a div
 const input = document.createElement('input');
