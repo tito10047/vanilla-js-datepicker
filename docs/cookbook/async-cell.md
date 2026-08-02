@@ -12,15 +12,15 @@ const dp = new Datepicker('#dp', {
     const data = await fetchAvailability(from, to);
     window.__availability = data;
   },
-  async onCellRender({ date, isDisabled }) {
+  async onCellRender(date, { isDisabled }) {
     if (isDisabled) return {};
 
     const key = date.toISOString().slice(0, 10);
     const avail = window.__availability?.[key];
 
-    if (!avail) return { disabled: true };
+    if (!avail) return { clickable: false };
     if (avail.spots < 3) return { className: 'cell--limited', title: `${avail.spots} spots left` };
-    if (avail.spots === 0) return { disabled: true, title: 'Fully booked' };
+    if (avail.spots === 0) return { clickable: false, title: 'Fully booked' };
     return {};
   },
 });
@@ -30,15 +30,13 @@ const dp = new Datepicker('#dp', {
 
 ```ts
 interface CellRenderContext {
-  date: Date;
-  isSelected: boolean;
+  view: 'days' | 'months' | 'years';
+  inMonth: boolean;
   isToday: boolean;
+  isSelected: boolean;
   isDisabled: boolean;
-  isOutsideMonth: boolean;
-  isRangeStart: boolean;
-  isRangeEnd: boolean;
-  isInRange: boolean;
   isWeekend: boolean;
+  isHighlighted: boolean;
 }
 ```
 
@@ -46,12 +44,11 @@ interface CellRenderContext {
 
 ```ts
 interface CellRenderResult {
-  className?: string;   // extra CSS class added to the cell button
-  title?: string;       // tooltip / aria-label
-  badge?: string;       // small badge text inside the cell
-  content?: string;     // replaces the cell button's inner HTML entirely
-  disabled?: boolean;   // marks cell as disabled
-  clickable?: boolean;  // false = non-interactive (removes click handler)
+  className?: string | string[];  // extra CSS class(es) added to the cell button
+  title?: string;                 // tooltip / aria-label
+  badge?: string;                 // small badge text inside the cell
+  content?: string;               // replaces the cell button's inner HTML entirely
+  clickable?: boolean;            // false = non-interactive (marks cell as disabled)
 }
 ```
 
