@@ -85,5 +85,29 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 | Option | Type | Description |
 |--------|------|-------------|
 | `classNames` | `Partial<ClassNames>` | Override any default class name. See [Theming](/guide/theming). |
-| `prevButtonContent` | `string` | HTML for the previous-month button (default: SVG arrow). |
-| `nextButtonContent` | `string` | HTML for the next-month button (default: SVG arrow). |
+| `prevButtonContent` | `string` | HTML string for the previous-month button (default: built-in SVG arrow). Accepts a Unicode character, plain text, or an SVG string. |
+| `nextButtonContent` | `string` | HTML string for the next-month button (default: built-in SVG arrow). Accepts a Unicode character, plain text, or an SVG string. |
+
+### Custom navigation arrows
+
+Pass any HTML string — a Unicode character, text, or an inline SVG — to replace the default arrow icons:
+
+```js
+// Unicode characters
+new Datepicker('#dp', {
+  prevButtonContent: '‹',
+  nextButtonContent: '›',
+});
+
+// Double angle quotes
+new Datepicker('#dp', {
+  prevButtonContent: '«',
+  nextButtonContent: '»',
+});
+
+// Inline SVG
+new Datepicker('#dp', {
+  prevButtonContent: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>',
+  nextButtonContent: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>',
+});
+```
