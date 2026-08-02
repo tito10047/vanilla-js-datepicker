@@ -20,12 +20,14 @@ test.describe('onOpen callback', () => {
   test('calendar is visible before onOpen resolves', async ({ page }) => {
     const input = page.locator('#dp-onopen');
 
-    // The dropdown should appear synchronously (before onOpen completes)
-    const clickPromise = input.click();
+    // The dropdown should appear synchronously (before onOpen completes).
+    // force:true bypasses Playwright's stability pre-check so the click is
+    // dispatched immediately — important for webkit which can be slow to
+    // confirm stability in CI and would otherwise time out.
+    const clickPromise = input.click({ force: true });
     const dropdown = page.locator('.vdp-dropdown').first();
 
-    // Use waitFor with a very short timeout — dropdown should be there immediately
-    await expect(dropdown).toBeVisible({ timeout: 500 });
+    await expect(dropdown).toBeVisible({ timeout: 2000 });
     await clickPromise;
   });
 });

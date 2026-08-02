@@ -263,7 +263,9 @@ export class Dropdown {
       // years — decade
       await this.callbacks.onMonthChange(year + dir * 12, month);
     }
-    this.renderCurrentView();
+    // renderCurrentView() is already called inside handleMonthChange → refresh(),
+    // together with the async pipeline. Calling it again here would wipe out
+    // any className/badge decorations applied by onCellRender.
   }
 
   // ─── Keyboard ────────────────────────────────────────────────────────────
@@ -299,7 +301,7 @@ export class Dropdown {
           // Navigate month if needed
           if (next.getMonth() !== this.state.get('currentMonth') || next.getFullYear() !== this.state.get('currentYear')) {
             await this.callbacks.onMonthChange(next.getFullYear(), next.getMonth());
-            this.renderCurrentView();
+            // renderCurrentView() is already called inside refresh(); don't call again.
           }
           this.dayGridView.focusDate(next);
           this.liveRegion?.announce(`${next.getDate()} ${resolveLocale(this.opts.locale).monthsLong[next.getMonth()]} ${next.getFullYear()}`);
