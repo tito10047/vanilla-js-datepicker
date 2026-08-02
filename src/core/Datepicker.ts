@@ -114,6 +114,11 @@ export class Datepicker {
   private init(): void {
     this.input.classList.add('vdp-input');
     this.input.setAttribute('autocomplete', 'off');
+    this.input.setAttribute('aria-autocomplete', 'none');
+    this.input.setAttribute('data-lpignore', 'true');
+    this.input.setAttribute('data-1p-ignore', '');
+    this.input.setAttribute('data-form-type', 'other');
+    this.input.setAttribute('spellcheck', 'false');
     this.input.setAttribute('role', 'combobox');
     this.input.setAttribute('aria-haspopup', 'dialog');
     this.input.setAttribute('aria-expanded', 'false');
@@ -393,6 +398,12 @@ export class Datepicker {
     this.cleanupFns = [];
     this.emitter.removeAllListeners();
     this.input.classList.remove('vdp-input');
+    this.input.removeAttribute('autocomplete');
+    this.input.removeAttribute('aria-autocomplete');
+    this.input.removeAttribute('data-lpignore');
+    this.input.removeAttribute('data-1p-ignore');
+    this.input.removeAttribute('data-form-type');
+    this.input.removeAttribute('spellcheck');
     this.input.removeAttribute('role');
     this.input.removeAttribute('aria-haspopup');
     this.input.removeAttribute('aria-expanded');
