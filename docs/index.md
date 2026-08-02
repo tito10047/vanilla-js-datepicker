@@ -9,6 +9,9 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
+      text: Live Demo
+      link: https://tito10047.github.io/vanilla-js-datepicker/demo/
+    - theme: alt
       text: API Reference
       link: /api
 
