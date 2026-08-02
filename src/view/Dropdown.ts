@@ -320,14 +320,13 @@ export class Dropdown {
   }
 
   private attachViewportResize(): () => void {
-    if (typeof window === 'undefined' || !window.visualViewport) return () => {};
-    const vv = window.visualViewport;
+    if (typeof window === 'undefined') return () => {};
     const reposition = () => this.position();
-    vv.addEventListener('resize', reposition);
-    vv.addEventListener('scroll', reposition);
+    window.addEventListener('resize', reposition, { passive: true });
+    window.addEventListener('scroll', reposition, { passive: true, capture: true });
     return () => {
-      vv.removeEventListener('resize', reposition);
-      vv.removeEventListener('scroll', reposition);
+      window.removeEventListener('resize', reposition);
+      window.removeEventListener('scroll', reposition, { capture: true } as EventListenerOptions);
     };
   }
 

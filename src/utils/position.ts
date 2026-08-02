@@ -16,8 +16,6 @@ export function computePosition(
   const dropRect = dropdown.getBoundingClientRect();
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
 
   const containerRect = container
     ? container.getBoundingClientRect()
@@ -42,12 +40,12 @@ export function computePosition(
   let left: number;
 
   if (placement === 'top') {
-    top = anchorRect.top + scrollY - dropRect.height - 4 - containerRect.top;
+    top = anchorRect.top - dropRect.height - 4 - containerRect.top;
   } else {
-    top = anchorRect.bottom + scrollY + 4 - containerRect.top;
+    top = anchorRect.bottom + 4 - containerRect.top;
   }
 
-  left = anchorRect.left + scrollX - containerRect.left;
+  left = anchorRect.left - containerRect.left;
 
   // Clamp horizontally
   const maxLeft = vw - dropRect.width - 8;
