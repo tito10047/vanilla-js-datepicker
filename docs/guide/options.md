@@ -66,8 +66,8 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 
 | Option | Signature | Description |
 |--------|-----------|-------------|
-| `onOpen` | `({ from, to }: OpenRange) => void \| Promise<void>` | Called once when calendar opens, with the visible date range. Awaited before `onCellRender`. |
-| `onMonthChange` | `({ from, to }: OpenRange) => void \| Promise<void>` | Called on every month navigation (not on initial open), with the new visible date range. Awaited before `onCellRender`. |
+| `onOpen` | `({ month, from, to }: OpenRange) => void \| Promise<void>` | Called once when calendar opens. `month` = 1st of displayed month; `from`/`to` = full visible grid range. Awaited before `onCellRender`. |
+| `onMonthChange` | `({ month, from, to }: OpenRange) => void \| Promise<void>` | Called on every month navigation (not on initial open). Same shape as `onOpen`. Awaited before `onCellRender`. |
 | `onClose` | `(reason: CloseReason) => void` | Called when calendar closes. |
 | `onChange` | `(value: string, event: DatepickerChangeEvent) => void` | Called when selected date changes. |
 | `onInput` | `(raw: string) => void` | Called on every keystroke in the input. |

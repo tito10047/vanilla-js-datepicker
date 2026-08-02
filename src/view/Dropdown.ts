@@ -234,18 +234,18 @@ export class Dropdown {
 
     const weekStart = this.opts.weekStart ?? resolveLocale(this.opts.locale).weekStart ?? 1;
 
+    const { buildGrid } = await import('../utils/calendarGrid');
+    const g = buildGrid(year, month, weekStart as 0|1|2|3|4|5|6);
+    const range = { month: new Date(year, month, 1), from: g.firstDate, to: g.lastDate };
+
     // onOpen — only on initial calendar open, not on month navigation
     if (isInitial && this.opts.onOpen) {
-      const { buildGrid } = await import('../utils/calendarGrid');
-      const g = buildGrid(year, month, weekStart as 0|1|2|3|4|5|6);
-      await this.opts.onOpen({ from: g.firstDate, to: g.lastDate });
+      await this.opts.onOpen(range);
     }
 
     // onMonthChange — only on navigation, not on initial open
     if (!isInitial && this.opts.onMonthChange) {
-      const { buildGrid } = await import('../utils/calendarGrid');
-      const g = buildGrid(year, month, weekStart as 0|1|2|3|4|5|6);
-      await this.opts.onMonthChange({ from: g.firstDate, to: g.lastDate });
+      await this.opts.onMonthChange(range);
     }
 
     // onCellRender — parallel, race-safe

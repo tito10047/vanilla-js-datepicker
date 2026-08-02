@@ -269,6 +269,18 @@ describe('onOpen callback', () => {
     expect(to >= lastOfMonth).toBe(true);
   });
 
+  it('onOpen range includes month — first day of the displayed month', async () => {
+    input = makeInput();
+    const onOpen = vi.fn().mockResolvedValue(undefined);
+    dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, onOpen, value: '2026-07-15' });
+    await dp.open();
+    const { month } = onOpen.mock.calls[0][0];
+    expect(month).toBeInstanceOf(Date);
+    expect(month.getFullYear()).toBe(2026);
+    expect(month.getMonth()).toBe(6); // July = 6
+    expect(month.getDate()).toBe(1);
+  });
+
   it('onOpen is NOT called again on month navigation', async () => {
     input = makeInput();
     const onOpen = vi.fn().mockResolvedValue(undefined);

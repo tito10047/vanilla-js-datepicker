@@ -42,6 +42,7 @@ export type CellRenderer = (
 // ─── Open handler ─────────────────────────────────────────────────────────────
 
 export interface OpenRange {
+  month: Date;
   from: Date;
   to: Date;
 }

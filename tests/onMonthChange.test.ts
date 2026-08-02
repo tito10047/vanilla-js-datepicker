@@ -57,19 +57,47 @@ describe('onMonthChange — invocation', () => {
   });
 });
 
-describe('onMonthChange — argument shape { from, to }', () => {
-  it('receives { from, to } Date objects covering the visible range', async () => {
+describe('onMonthChange — argument shape { from, to, month }', () => {
+  it('receives { from, to, month } Date objects covering the visible range', async () => {
     input = makeInput();
     const onMonthChange = vi.fn().mockResolvedValue(undefined);
     dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, onMonthChange, value: '2026-07-15' });
     await dp.open();
     await dp.goToNextMonth(); // navigates to August 2026
 
-    const arg = onMonthChange.mock.calls[0][0] as { from: Date; to: Date };
+    const arg = onMonthChange.mock.calls[0][0] as { from: Date; to: Date; month: Date };
     expect(arg).toHaveProperty('from');
     expect(arg).toHaveProperty('to');
+    expect(arg).toHaveProperty('month');
     expect(arg.from).toBeInstanceOf(Date);
     expect(arg.to).toBeInstanceOf(Date);
+    expect(arg.month).toBeInstanceOf(Date);
+  });
+
+  it('month is the 1st day of the newly displayed month', async () => {
+    input = makeInput();
+    const onMonthChange = vi.fn().mockResolvedValue(undefined);
+    dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, onMonthChange, value: '2026-07-15' });
+    await dp.open();
+    await dp.goToNextMonth(); // August 2026
+
+    const { month } = onMonthChange.mock.calls[0][0] as { month: Date };
+    expect(month.getFullYear()).toBe(2026);
+    expect(month.getMonth()).toBe(7); // August = 7
+    expect(month.getDate()).toBe(1);
+  });
+
+  it('month reflects correct month when navigating backwards', async () => {
+    input = makeInput();
+    const onMonthChange = vi.fn().mockResolvedValue(undefined);
+    dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, onMonthChange, value: '2026-07-15' });
+    await dp.open();
+    await dp.goToPrevMonth(); // June 2026
+
+    const { month } = onMonthChange.mock.calls[0][0] as { month: Date };
+    expect(month.getFullYear()).toBe(2026);
+    expect(month.getMonth()).toBe(5); // June = 5
+    expect(month.getDate()).toBe(1);
   });
 
   it('from is on or before the 1st of the new month', async () => {

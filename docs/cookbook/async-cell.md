@@ -11,7 +11,10 @@ import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
 let availability: Record<string, { spots: number }> = {};
 
-async function loadMonth({ from, to }: { from: Date; to: Date }) {
+async function loadMonth({ month, from, to }: { month: Date; from: Date; to: Date }) {
+  // month  — 1st day of the displayed month (e.g. 2026-08-01)
+  // from   — first visible cell (may be from the previous month)
+  // to     — last visible cell (may be from the next month)
   availability = await fetchAvailability(from, to);
 }
 
