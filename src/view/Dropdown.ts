@@ -232,12 +232,20 @@ export class Dropdown {
     const year = this.state.get('currentYear');
     const month = this.state.get('currentMonth');
 
+    const weekStart = this.opts.weekStart ?? resolveLocale(this.opts.locale).weekStart ?? 1;
+
     // onOpen — only on initial calendar open, not on month navigation
     if (isInitial && this.opts.onOpen) {
-      const weekStart = this.opts.weekStart ?? resolveLocale(this.opts.locale).weekStart ?? 1;
       const { buildGrid } = await import('../utils/calendarGrid');
       const g = buildGrid(year, month, weekStart as 0|1|2|3|4|5|6);
       await this.opts.onOpen({ from: g.firstDate, to: g.lastDate });
+    }
+
+    // onMonthChange — only on navigation, not on initial open
+    if (!isInitial && this.opts.onMonthChange) {
+      const { buildGrid } = await import('../utils/calendarGrid');
+      const g = buildGrid(year, month, weekStart as 0|1|2|3|4|5|6);
+      await this.opts.onMonthChange({ from: g.firstDate, to: g.lastDate });
     }
 
     // onCellRender — parallel, race-safe

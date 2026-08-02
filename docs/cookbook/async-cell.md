@@ -2,25 +2,32 @@
 
 Use `onCellRender` to asynchronously customise individual day cells — perfect for loading availability data from an API.
 
+## Fetching data on open and on navigation
+
+`onOpen` fires once when the calendar first opens. `onMonthChange` fires every time the user navigates to a different month. Both receive `{ from, to }` — the visible date range — and are awaited before `onCellRender` runs, so the data is ready by the time cells are decorated.
+
 ```ts
 import { Datepicker } from '@tito10047/vanilla-js-datepicker';
 
+let availability: Record<string, { spots: number }> = {};
+
+async function loadMonth({ from, to }: { from: Date; to: Date }) {
+  availability = await fetchAvailability(from, to);
+}
+
 const dp = new Datepicker('#dp', {
   locale: 'en',
-  async onOpen({ from, to }) {
-    // Fetch availability for the visible month range
-    const data = await fetchAvailability(from, to);
-    window.__availability = data;
-  },
+  onOpen: loadMonth,
+  onMonthChange: loadMonth,
   async onCellRender(date, { isDisabled }) {
     if (isDisabled) return {};
 
     const key = date.toISOString().slice(0, 10);
-    const avail = window.__availability?.[key];
+    const avail = availability[key];
 
     if (!avail) return { clickable: false };
-    if (avail.spots < 3) return { className: 'cell--limited', title: `${avail.spots} spots left` };
     if (avail.spots === 0) return { clickable: false, title: 'Fully booked' };
+    if (avail.spots < 3) return { className: 'cell--limited', title: `${avail.spots} spots left` };
     return {};
   },
 });

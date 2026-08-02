@@ -218,6 +218,7 @@ export interface DatepickerOptions {
   // Async lifecycle hooks
   onBeforeOpen?: () => boolean | Promise<boolean>;
   onOpen?: (range: OpenRange) => void | Promise<void>;
+  onMonthChange?: (range: OpenRange) => void | Promise<void>;
   onCellRender?: CellRenderer;
   onBeforeChange?: (next: DateValue, prev: DateValue) => boolean | Promise<boolean>;
   onBeforeMonthChange?: (nextMonth: Date, prevMonth: Date) => boolean | Promise<boolean>;
@@ -229,7 +230,6 @@ export interface DatepickerOptions {
   onInput?: (rawValue: string) => void;
   onInvalid?: (err: DatepickerError) => void;
   onViewChange?: (view: CalendarView) => void;
-  onMonthChange?: (month: Date) => void;
   onYearChange?: (year: number) => void;
 }
 

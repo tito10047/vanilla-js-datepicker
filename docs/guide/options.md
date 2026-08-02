@@ -66,13 +66,13 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 
 | Option | Signature | Description |
 |--------|-----------|-------------|
-| `onOpen` | `({ from, to }: OpenRange) => void \| Promise<void>` | Called once when calendar opens, with the visible date range. |
+| `onOpen` | `({ from, to }: OpenRange) => void \| Promise<void>` | Called once when calendar opens, with the visible date range. Awaited before `onCellRender`. |
+| `onMonthChange` | `({ from, to }: OpenRange) => void \| Promise<void>` | Called on every month navigation (not on initial open), with the new visible date range. Awaited before `onCellRender`. |
 | `onClose` | `(reason: CloseReason) => void` | Called when calendar closes. |
 | `onChange` | `(value: string, event: DatepickerChangeEvent) => void` | Called when selected date changes. |
 | `onInput` | `(raw: string) => void` | Called on every keystroke in the input. |
 | `onInvalid` | `(error: DatepickerError) => void` | Called when an invalid value is rejected. |
 | `onViewChange` | `(view: CalendarView) => void` | Called when the calendar view changes. |
-| `onMonthChange` | `(month: Date) => void` | Called when the displayed month changes. |
 | `onYearChange` | `(year: number) => void` | Called when the displayed year changes. |
 | `onCellRender` | `(ctx: CellRenderContext) => CellRenderResult \| Promise<CellRenderResult>` | Called per visible day cell for async customisation. |
 | `onBeforeOpen` | `() => boolean \| Promise<boolean>` | Return `false` to cancel opening. |

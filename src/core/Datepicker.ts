@@ -153,7 +153,6 @@ export class Datepicker {
     if (this.opts.onInput) this.emitter.on('vdp:input', ({ raw }: { raw: string }) => this.opts.onInput!(raw));
     if (this.opts.onInvalid) this.emitter.on('vdp:invalid', (e: DatepickerError) => this.opts.onInvalid!(e));
     if (this.opts.onViewChange) this.emitter.on('vdp:viewchange', ({ to }: { to: CalendarView }) => this.opts.onViewChange!(to));
-    if (this.opts.onMonthChange) this.emitter.on('vdp:monthchange', ({ month }: { month: Date }) => this.opts.onMonthChange!(month));
     if (this.opts.onYearChange) this.emitter.on('vdp:yearchange', ({ year }: { year: number }) => this.opts.onYearChange!(year));
   }
 
