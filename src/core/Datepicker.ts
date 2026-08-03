@@ -168,6 +168,19 @@ export class Datepicker {
       currentYear: date.getFullYear(),
       currentMonth: date.getMonth(),
     });
+    if (this.opts.minDate) {
+      const min = this.opts.minDate instanceof Date ? this.opts.minDate : parseDate(String(this.opts.minDate), this.opts.format!);
+      if (min && startOfDay(date) < startOfDay(min)) {
+        this.fireInvalid('BELOW_MIN', `${formatted} is before minDate`, formatted);
+        return;
+      }
+    }
+    if (this.opts.maxDate) {
+      const max = this.opts.maxDate instanceof Date ? this.opts.maxDate : parseDate(String(this.opts.maxDate), this.opts.format!);
+      if (max && startOfDay(date) > startOfDay(max)) {
+        this.fireInvalid('ABOVE_MAX', `${formatted} is after maxDate`, formatted);
+      }
+    }
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────

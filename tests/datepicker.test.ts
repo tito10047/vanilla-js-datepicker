@@ -326,6 +326,45 @@ describe('minDate / maxDate', () => {
     expect(dp2.getValue()).toBe('2026-07-31');
     dp2.destroy();
   });
+
+  it('initial value before minDate keeps original value and fires vdp:invalid', () => {
+    const inp = makeInput();
+    const handler = vi.fn();
+    inp.addEventListener('vdp:invalid', handler);
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', value: '2020-01-01', minDate: '2026-07-01', openOnFocus: false });
+    expect(inp.value).toBe('2020-01-01');
+    expect(dp2.getValue()).toBe('2020-01-01');
+    expect(handler).toHaveBeenCalledOnce();
+    const detail = (handler.mock.calls[0][0] as CustomEvent).detail;
+    expect(detail.code).toBe('BELOW_MIN');
+    expect(inp.classList.contains('vdp-invalid')).toBe(true);
+    dp2.destroy();
+  });
+
+  it('initial value after maxDate keeps original value and fires vdp:invalid', () => {
+    const inp = makeInput();
+    const handler = vi.fn();
+    inp.addEventListener('vdp:invalid', handler);
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', value: '2030-01-01', maxDate: '2026-07-31', openOnFocus: false });
+    expect(inp.value).toBe('2030-01-01');
+    expect(dp2.getValue()).toBe('2030-01-01');
+    expect(handler).toHaveBeenCalledOnce();
+    const detail = (handler.mock.calls[0][0] as CustomEvent).detail;
+    expect(detail.code).toBe('ABOVE_MAX');
+    expect(inp.classList.contains('vdp-invalid')).toBe(true);
+    dp2.destroy();
+  });
+
+  it('initial value within range is valid and does not fire vdp:invalid', () => {
+    const inp = makeInput();
+    const handler = vi.fn();
+    inp.addEventListener('vdp:invalid', handler);
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', value: '2026-07-15', minDate: '2026-07-01', maxDate: '2026-07-31', openOnFocus: false });
+    expect(inp.value).toBe('2026-07-15');
+    expect(handler).not.toHaveBeenCalled();
+    expect(inp.classList.contains('vdp-invalid')).toBe(false);
+    dp2.destroy();
+  });
 });
 
 // ─── onBeforeChange guard ─────────────────────────────────────────────────────
