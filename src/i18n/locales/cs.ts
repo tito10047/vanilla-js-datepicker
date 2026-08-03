@@ -22,4 +22,6 @@ export const cs: LocaleConfig = {
   monthPickerLabel: 'Vybrat měsíc',
   yearPickerLabel: 'Vybrat rok',
   weekNumberLabel: 'Týden',
+  minDateTitle: 'Datum je před povoleným minimem',
+  maxDateTitle: 'Datum je po povoleném maximu',
 };

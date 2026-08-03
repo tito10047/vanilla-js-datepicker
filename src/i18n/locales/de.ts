@@ -22,4 +22,6 @@ export const de: LocaleConfig = {
   monthPickerLabel: 'Monat auswählen',
   yearPickerLabel: 'Jahr auswählen',
   weekNumberLabel: 'Woche',
+  minDateTitle: 'Datum liegt vor dem erlaubten Minimum',
+  maxDateTitle: 'Datum liegt nach dem erlaubten Maximum',
 };

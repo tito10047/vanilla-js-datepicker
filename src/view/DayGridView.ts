@@ -1,6 +1,7 @@
 import { el, cn } from './templates';
 import { buildGrid } from '../utils/calendarGrid';
 import { isSameDay, isWeekend, startOfDay } from '../utils/dateMath';
+import { parseDate } from '../parser/parse';
 import type { DatepickerOptions, LocaleConfig, CellRenderResult, WeekdayFormat } from '../core/types';
 import type { RangeState } from '../core/RangeState';
 
@@ -52,6 +53,16 @@ export class DayGridView {
     const showWeekNums = this.opts.showWeekNumbers ?? false;
     const wdFormat: WeekdayFormat = this.opts.weekdayFormat ?? 'short';
 
+    const fmt = this.opts.format ?? 'YYYY-MM-DD';
+    const minDay = this.opts.minDate
+      ? startOfDay(this.opts.minDate instanceof Date ? this.opts.minDate : (parseDate(String(this.opts.minDate), fmt) ?? new Date(NaN)))
+      : null;
+    const maxDay = this.opts.maxDate
+      ? startOfDay(this.opts.maxDate instanceof Date ? this.opts.maxDate : (parseDate(String(this.opts.maxDate), fmt) ?? new Date(NaN)))
+      : null;
+    const minTitle = this.opts.minDateTitle ?? this.locale.minDateTitle;
+    const maxTitle = this.opts.maxDateTitle ?? this.locale.maxDateTitle;
+
     // ── Weekday header ─────────────────────────────────────────
     const wdRow = el('div', { class: cn(this.opts, 'weekdayRow', 'vdp-weekday-row'), role: 'row' });
     if (showWeekNums) {
@@ -95,8 +106,13 @@ export class DayGridView {
         const rangeEnd = rangeState.isRangeEnd(cell.date);
         const isMultiSelected = rangeState.isSelected(cell.date);
         const weekend = isWeekend(cell.date);
-        const isDisabled = disabledDates.some((d) => isSameDay(d, cell.date)) ||
+        const cellDay = startOfDay(cell.date);
+        const isBelowMin = minDay !== null && isFinite(minDay.getTime()) && cellDay < minDay;
+        const isAboveMax = maxDay !== null && isFinite(maxDay.getTime()) && cellDay > maxDay;
+        const isDisabled = isBelowMin || isAboveMax ||
+          disabledDates.some((d) => isSameDay(d, cell.date)) ||
           (this.opts.disabledWeekdays ?? []).includes(cell.date.getDay());
+        const rangeTitle = isBelowMin ? minTitle : isAboveMax ? maxTitle : undefined;
         const isHighlighted = highlightedDates.some((d) => isSameDay(d, cell.date));
 
         const classes = [cn(this.opts, 'cell', 'vdp-cell')];
@@ -110,7 +126,7 @@ export class DayGridView {
         if (isHighlighted) classes.push(cn(this.opts, 'cellHighlighted', 'vdp-cell--highlighted'));
         if (isDisabled) classes.push(cn(this.opts, 'cellDisabled', 'vdp-cell--disabled'));
 
-        const btn = el('button', {
+        const btnAttrs: Record<string, string> = {
           class: classes.join(' '),
           type: 'button',
           role: 'gridcell',
@@ -120,7 +136,9 @@ export class DayGridView {
           'aria-current': cell.isToday ? 'date' : '',
           'aria-label': `${cell.dayOfMonth} ${this.locale.monthsLong[cell.date.getMonth()]} ${cell.date.getFullYear()}`,
           'data-date': localISODate(cell.date),
-        }, String(cell.dayOfMonth));
+        };
+        if (rangeTitle) btnAttrs['title'] = rangeTitle;
+        const btn = el('button', btnAttrs, String(cell.dayOfMonth));
 
         btn.addEventListener('focus', () => { this.focusedDate = startOfDay(cell.date); });
         if (!isDisabled) {

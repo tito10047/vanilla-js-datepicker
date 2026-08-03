@@ -31,7 +31,7 @@ interface DatepickerState extends Record<string, unknown> {
 }
 
 const DEFAULTS: Required<Omit<DatepickerOptions,
-  'value' | 'defaultValue' | 'container' | 'minDate' | 'maxDate' |
+  'value' | 'defaultValue' | 'container' | 'minDate' | 'maxDate' | 'minDateTitle' | 'maxDateTitle' |
   'disabledDates' | 'highlightedDates' |
   'onBeforeOpen' | 'onOpen' | 'onCellRender' | 'onBeforeChange' |
   'onBeforeMonthChange' | 'validate' |

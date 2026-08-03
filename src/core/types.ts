@@ -103,6 +103,8 @@ export interface LocaleConfig {
   monthPickerLabel: string;
   yearPickerLabel: string;
   weekNumberLabel: string;
+  minDateTitle: string;
+  maxDateTitle: string;
 }
 
 // ─── Class name overrides ─────────────────────────────────────────────────────
@@ -169,6 +171,8 @@ export interface DatepickerOptions {
   defaultValue?: string | Date | null;
   minDate?: string | Date;
   maxDate?: string | Date;
+  minDateTitle?: string;
+  maxDateTitle?: string;
   disabledDates?: (string | Date)[] | DisabledDatesFn;
   disabledWeekdays?: number[];
   highlightedDates?: (string | Date)[];

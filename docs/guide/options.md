@@ -17,8 +17,10 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `minDate` | `string \| Date` | — | Earliest selectable date. |
-| `maxDate` | `string \| Date` | — | Latest selectable date. |
+| `minDate` | `string \| Date` | — | Earliest selectable date. Cells before this date are visually disabled and not clickable. |
+| `maxDate` | `string \| Date` | — | Latest selectable date. Cells after this date are visually disabled and not clickable. |
+| `minDateTitle` | `string` | locale default | Tooltip shown on cells that fall before `minDate`. Overrides the locale string. |
+| `maxDateTitle` | `string` | locale default | Tooltip shown on cells that fall after `maxDate`. Overrides the locale string. |
 | `disabledDates` | `Date[] \| ((d: Date) => boolean \| Promise<boolean>)` | — | Specific dates or predicate to disable. |
 | `disabledWeekdays` | `number[]` | `[]` | Weekday indices to disable (0=Sun … 6=Sat). |
 | `maxRangeDays` | `number` | `0` | Max span of a range selection (0 = unlimited). |

@@ -162,3 +162,139 @@ describe('minDate / maxDate disable out-of-range cells via setValue', () => {
     dp.destroy();
   });
 });
+
+// ─── minDate / maxDate calendar cell rendering ────────────────────────────────
+
+describe('minDate — calendar cell rendering', () => {
+  it('cells before minDate are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-10',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-05"]');
+    expect(cell?.getAttribute('aria-disabled')).toBe('true');
+    expect(cell?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('minDate cell itself is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-10',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-10"]');
+    expect(cell?.getAttribute('aria-disabled')).toBe('false');
+    expect(cell?.classList.contains('vdp-cell--disabled')).toBe(false);
+    await dp.close(); dp.destroy();
+  });
+
+  it('cells before minDate have a title attribute', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-10',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-05"]');
+    expect(cell?.getAttribute('title')).toBeTruthy();
+    await dp.close(); dp.destroy();
+  });
+
+  it('minDateTitle option overrides the title on cells before minDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-10',
+      minDateTitle: 'Custom min title',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-05"]');
+    expect(cell?.getAttribute('title')).toBe('Custom min title');
+    await dp.close(); dp.destroy();
+  });
+
+  it('clicking a cell before minDate does not change value', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-10',
+      closeOnSelect: false,
+    });
+    await dp.open();
+    const cell = document.querySelector<HTMLButtonElement>('[data-date="2026-07-05"]');
+    cell?.click();
+    expect(dp.getValue()).toBe('2026-07-15');
+    await dp.close(); dp.destroy();
+  });
+});
+
+describe('maxDate — calendar cell rendering', () => {
+  it('cells after maxDate are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-20',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-25"]');
+    expect(cell?.getAttribute('aria-disabled')).toBe('true');
+    expect(cell?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('maxDate cell itself is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-20',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-20"]');
+    expect(cell?.getAttribute('aria-disabled')).toBe('false');
+    expect(cell?.classList.contains('vdp-cell--disabled')).toBe(false);
+    await dp.close(); dp.destroy();
+  });
+
+  it('cells after maxDate have a title attribute', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-20',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-25"]');
+    expect(cell?.getAttribute('title')).toBeTruthy();
+    await dp.close(); dp.destroy();
+  });
+
+  it('maxDateTitle option overrides the title on cells after maxDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-20',
+      maxDateTitle: 'Custom max title',
+    });
+    await dp.open();
+    const cell = document.querySelector('[data-date="2026-07-25"]');
+    expect(cell?.getAttribute('title')).toBe('Custom max title');
+    await dp.close(); dp.destroy();
+  });
+
+  it('clicking a cell after maxDate does not change value', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-20',
+      closeOnSelect: false,
+    });
+    await dp.open();
+    const cell = document.querySelector<HTMLButtonElement>('[data-date="2026-07-25"]');
+    cell?.click();
+    expect(dp.getValue()).toBe('2026-07-15');
+    await dp.close(); dp.destroy();
+  });
+});
