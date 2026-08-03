@@ -72,6 +72,57 @@ describe('constructor', () => {
     expect(inp.value).toBe('2026-07-04');
     dp2.destroy();
   });
+
+  it('pre-filled input value is picked up by getDate() immediately', () => {
+    const inp = makeInput('2026-07-04');
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', openOnFocus: false });
+    expect(dp2.getDate()).not.toBeNull();
+    expect(dp2.getDate()!.getFullYear()).toBe(2026);
+    expect(dp2.getDate()!.getMonth()).toBe(6);
+    expect(dp2.getDate()!.getDate()).toBe(4);
+    dp2.destroy();
+  });
+
+  it('pre-filled input value is picked up by getValue() immediately', () => {
+    const inp = makeInput('2026-07-04');
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', openOnFocus: false });
+    expect(dp2.getValue()).toBe('2026-07-04');
+    dp2.destroy();
+  });
+
+  it('pre-filled input value before minDate is marked invalid immediately', () => {
+    const inp = makeInput('2020-01-01');
+    const handler = vi.fn();
+    inp.addEventListener('vdp:invalid', handler);
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', minDate: '2026-07-01', openOnFocus: false });
+    expect(dp2.getValue()).toBe('2020-01-01');
+    expect(handler).toHaveBeenCalledOnce();
+    expect(inp.classList.contains('vdp-invalid')).toBe(true);
+    dp2.destroy();
+  });
+
+  it('pre-filled input value is NOT reformatted even if parseable', () => {
+    // "4.7.2020" parses fine with DD.MM.YYYY but formatted would be "04.07.2020" — must not change
+    const inp = makeInput('4.7.2020');
+    const dp2 = new Datepicker(inp, { format: 'DD.MM.YYYY', minDate: '01.01.2026', openOnFocus: false });
+    expect(inp.value).toBe('4.7.2020');
+    dp2.destroy();
+  });
+
+  it('pre-filled invalid date leaves getDate() null', () => {
+    const inp = makeInput('2020-01-01');
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', minDate: '2026-07-01', openOnFocus: false });
+    expect(dp2.getDate()).toBeNull();
+    dp2.destroy();
+  });
+
+  it('opts.value invalid date leaves getDate() null', () => {
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', value: '2020-01-01', minDate: '2026-07-01', openOnFocus: false });
+    expect(inp.value).toBe('2020-01-01');
+    expect(dp2.getDate()).toBeNull();
+    dp2.destroy();
+  });
 });
 
 // ─── getValue / setValue ──────────────────────────────────────────────────────

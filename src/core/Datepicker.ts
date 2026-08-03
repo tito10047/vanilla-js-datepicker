@@ -131,9 +131,11 @@ export class Datepicker {
       this.addedInputMode = true;
     }
 
-    const initialValue = this.opts.value ?? this.opts.defaultValue;
-    if (initialValue != null) {
-      this.applyInitialValue(initialValue);
+    const optsValue = this.opts.value ?? this.opts.defaultValue;
+    if (optsValue != null) {
+      this.applyInitialValue(optsValue, false);
+    } else if (this.input.value) {
+      this.applyInitialValue(this.input.value, true);
     }
 
     if (this.opts.openOnFocus) {
@@ -159,29 +161,38 @@ export class Datepicker {
     if (this.opts.onYearChange) this.emitter.on('vdp:yearchange', ({ year }: { year: number }) => this.opts.onYearChange!(year));
   }
 
-  private applyInitialValue(value: string | Date | null): void {
+  private applyInitialValue(value: string | Date | null, fromInput: boolean): void {
     if (!value) return;
-    const date = value instanceof Date ? value : parseDate(String(value), this.opts.format!);
+    const rawString = value instanceof Date ? null : String(value);
+    const date = value instanceof Date ? value : parseDate(rawString!, this.opts.format!);
     if (!date) return;
+
     const formatted = formatDate(date, this.opts.format!);
-    this.input.value = formatted;
+    // When reading from the existing input element keep its text as-is;
+    // when value comes from options we write the normalised form.
+    const displayRaw = fromInput ? rawString! : formatted;
+    if (!fromInput) this.input.value = formatted;
+
     this.state.patch({
-      rawValue: formatted,
+      rawValue: displayRaw,
       selectedDate: startOfDay(date),
       currentYear: date.getFullYear(),
       currentMonth: date.getMonth(),
     });
+
     if (this.opts.minDate) {
       const min = this.opts.minDate instanceof Date ? this.opts.minDate : parseDate(String(this.opts.minDate), this.opts.format!);
       if (min && startOfDay(date) < startOfDay(min)) {
-        this.fireInvalid('BELOW_MIN', `${formatted} is before minDate`, formatted);
+        this.state.set('selectedDate', null);
+        this.fireInvalid('BELOW_MIN', `${displayRaw} is before minDate`, displayRaw);
         return;
       }
     }
     if (this.opts.maxDate) {
       const max = this.opts.maxDate instanceof Date ? this.opts.maxDate : parseDate(String(this.opts.maxDate), this.opts.format!);
       if (max && startOfDay(date) > startOfDay(max)) {
-        this.fireInvalid('ABOVE_MAX', `${formatted} is after maxDate`, formatted);
+        this.state.set('selectedDate', null);
+        this.fireInvalid('ABOVE_MAX', `${displayRaw} is after maxDate`, displayRaw);
       }
     }
   }
