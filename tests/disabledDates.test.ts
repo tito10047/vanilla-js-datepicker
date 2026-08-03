@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Datepicker } from '../src/core/Datepicker';
 
 function makeInput(): HTMLInputElement {
@@ -295,6 +295,245 @@ describe('maxDate — calendar cell rendering', () => {
     const cell = document.querySelector<HTMLButtonElement>('[data-date="2026-07-25"]');
     cell?.click();
     expect(dp.getValue()).toBe('2026-07-15');
+    await dp.close(); dp.destroy();
+  });
+});
+
+// ─── minDate / maxDate — month grid ───────────────────────────────────────────
+
+describe('minDate — month grid rendering', () => {
+  it('months fully before minDate are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-01',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    // June (month 5) last day = 2026-06-30 < 2026-07-01 → disabled
+    const june = document.querySelector('[data-month="5"]');
+    expect(june?.getAttribute('aria-disabled')).toBe('true');
+    expect(june?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('month containing minDate is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-01',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    const july = document.querySelector('[data-month="6"]');
+    expect(july?.getAttribute('aria-disabled')).toBe('false');
+    expect(july?.classList.contains('vdp-cell--disabled')).toBe(false);
+    await dp.close(); dp.destroy();
+  });
+
+  it('disabled months before minDate have a title attribute', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-01',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    const june = document.querySelector('[data-month="5"]');
+    expect(june?.getAttribute('title')).toBeTruthy();
+    await dp.close(); dp.destroy();
+  });
+
+  it('minMonthTitle option overrides title on months before minDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-01',
+      minMonthTitle: 'Custom month min',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    const june = document.querySelector('[data-month="5"]');
+    expect(june?.getAttribute('title')).toBe('Custom month min');
+    await dp.close(); dp.destroy();
+  });
+
+  it('clicking a disabled month does not navigate', async () => {
+    const input = makeInput();
+    const handler = vi.fn();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-07-01',
+    });
+    input.addEventListener('vdp:monthchange', handler);
+    await dp.open();
+    await dp.switchView('months');
+    const june = document.querySelector<HTMLButtonElement>('[data-month="5"]');
+    june?.click();
+    expect(handler).not.toHaveBeenCalled();
+    await dp.close(); dp.destroy();
+  });
+});
+
+describe('maxDate — month grid rendering', () => {
+  it('months fully after maxDate are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-31',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    // August (month 7) first day = 2026-08-01 > 2026-07-31 → disabled
+    const august = document.querySelector('[data-month="7"]');
+    expect(august?.getAttribute('aria-disabled')).toBe('true');
+    expect(august?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('month containing maxDate is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-31',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    const july = document.querySelector('[data-month="6"]');
+    expect(july?.getAttribute('aria-disabled')).toBe('false');
+    await dp.close(); dp.destroy();
+  });
+
+  it('maxMonthTitle option overrides title on months after maxDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-07-31',
+      maxMonthTitle: 'Custom month max',
+    });
+    await dp.open();
+    await dp.switchView('months');
+    const august = document.querySelector('[data-month="7"]');
+    expect(august?.getAttribute('title')).toBe('Custom month max');
+    await dp.close(); dp.destroy();
+  });
+});
+
+// ─── minDate / maxDate — year grid ────────────────────────────────────────────
+
+describe('minDate — year grid rendering', () => {
+  it('years fully before minDate year are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-01-01',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    // year 2025 < 2026 → disabled
+    const y2025 = document.querySelector('[data-year="2025"]');
+    expect(y2025?.getAttribute('aria-disabled')).toBe('true');
+    expect(y2025?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('year containing minDate is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-01-01',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2026 = document.querySelector('[data-year="2026"]');
+    expect(y2026?.getAttribute('aria-disabled')).toBe('false');
+    expect(y2026?.classList.contains('vdp-cell--disabled')).toBe(false);
+    await dp.close(); dp.destroy();
+  });
+
+  it('disabled years have a title attribute', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-01-01',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2025 = document.querySelector('[data-year="2025"]');
+    expect(y2025?.getAttribute('title')).toBeTruthy();
+    await dp.close(); dp.destroy();
+  });
+
+  it('minYearTitle option overrides title on years before minDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-01-01',
+      minYearTitle: 'Custom year min',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2025 = document.querySelector('[data-year="2025"]');
+    expect(y2025?.getAttribute('title')).toBe('Custom year min');
+    await dp.close(); dp.destroy();
+  });
+
+  it('clicking a disabled year does not navigate', async () => {
+    const input = makeInput();
+    const handler = vi.fn();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', minDate: '2026-01-01',
+    });
+    input.addEventListener('vdp:monthchange', handler);
+    await dp.open();
+    await dp.switchView('years');
+    const y2025 = document.querySelector<HTMLButtonElement>('[data-year="2025"]');
+    y2025?.click();
+    expect(handler).not.toHaveBeenCalled();
+    await dp.close(); dp.destroy();
+  });
+});
+
+describe('maxDate — year grid rendering', () => {
+  it('years fully after maxDate year are disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-12-31',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2027 = document.querySelector('[data-year="2027"]');
+    expect(y2027?.getAttribute('aria-disabled')).toBe('true');
+    expect(y2027?.classList.contains('vdp-cell--disabled')).toBe(true);
+    await dp.close(); dp.destroy();
+  });
+
+  it('year containing maxDate is NOT disabled', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-12-31',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2026 = document.querySelector('[data-year="2026"]');
+    expect(y2026?.getAttribute('aria-disabled')).toBe('false');
+    await dp.close(); dp.destroy();
+  });
+
+  it('maxYearTitle option overrides title on years after maxDate', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD', openOnFocus: false,
+      value: '2026-07-15', maxDate: '2026-12-31',
+      maxYearTitle: 'Custom year max',
+    });
+    await dp.open();
+    await dp.switchView('years');
+    const y2027 = document.querySelector('[data-year="2027"]');
+    expect(y2027?.getAttribute('title')).toBe('Custom year max');
     await dp.close(); dp.destroy();
   });
 });

@@ -115,7 +115,7 @@ export class Dropdown {
       },
     });
 
-    this.yearGridView = new YearGridView(this.opts, {
+    this.yearGridView = new YearGridView(this.opts, locale, {
       onYearClick: async (year) => {
         await this.callbacks.onMonthChange(year, this.state.get('currentMonth'));
         this.switchView('months');
@@ -211,7 +211,7 @@ export class Dropdown {
       this.bodyEl.append(this.dayGridView.root);
       this.headerView.update('days', year, month);
     } else if (view === 'months') {
-      this.monthGridView.render(month);
+      this.monthGridView.render(month, year);
       this.bodyEl.append(this.monthGridView.root);
       this.headerView.update('months', year, month);
       this.monthGridView.focus();

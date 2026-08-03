@@ -24,4 +24,8 @@ export const en: LocaleConfig = {
   weekNumberLabel: 'Week',
   minDateTitle: 'Date is before the allowed minimum',
   maxDateTitle: 'Date is after the allowed maximum',
+  minMonthTitle: 'Month is before the allowed minimum',
+  maxMonthTitle: 'Month is after the allowed maximum',
+  minYearTitle: 'Year is before the allowed minimum',
+  maxYearTitle: 'Year is after the allowed maximum',
 };

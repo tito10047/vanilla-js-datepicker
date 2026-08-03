@@ -24,4 +24,8 @@ export const cs: LocaleConfig = {
   weekNumberLabel: 'Týden',
   minDateTitle: 'Datum je před povoleným minimem',
   maxDateTitle: 'Datum je po povoleném maximu',
+  minMonthTitle: 'Měsíc je před povoleným minimem',
+  maxMonthTitle: 'Měsíc je po povoleném maximu',
+  minYearTitle: 'Rok je před povoleným minimem',
+  maxYearTitle: 'Rok je po povoleném maximu',
 };
