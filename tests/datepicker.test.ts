@@ -518,4 +518,35 @@ describe('static API', () => {
     expect(pickers.length).toBeGreaterThan(0);
     pickers.forEach((p) => p.destroy());
   });
+
+  it('Datepicker.getInstance returns instance by element', () => {
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, { openOnFocus: false });
+    expect(Datepicker.getInstance(inp)).toBe(dp2);
+    dp2.destroy();
+  });
+
+  it('Datepicker.getInstance returns instance by CSS selector', () => {
+    const inp = makeInput();
+    inp.id = 'vdp-gi-test';
+    const dp2 = new Datepicker(inp, { openOnFocus: false });
+    expect(Datepicker.getInstance('#vdp-gi-test')).toBe(dp2);
+    dp2.destroy();
+  });
+
+  it('Datepicker.getInstance returns null when not initialised', () => {
+    const inp = makeInput();
+    expect(Datepicker.getInstance(inp)).toBeNull();
+  });
+
+  it('Datepicker.getInstance returns null after destroy', () => {
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, { openOnFocus: false });
+    dp2.destroy();
+    expect(Datepicker.getInstance(inp)).toBeNull();
+  });
+
+  it('Datepicker.getInstance returns null for unknown selector', () => {
+    expect(Datepicker.getInstance('#no-such-element')).toBeNull();
+  });
 });

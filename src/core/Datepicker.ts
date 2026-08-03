@@ -85,6 +85,7 @@ export class Datepicker {
   private destroyed = false;
   private addedInputMode = false;
   private static defaults: Partial<DatepickerOptions> = {};
+  private static registry = new WeakMap<HTMLInputElement, Datepicker>();
 
   constructor(input: HTMLInputElement | string, options: DatepickerOptions = {}) {
     const el =
@@ -95,6 +96,7 @@ export class Datepicker {
 
     this.input = el;
     this.opts = { ...DEFAULTS, ...Datepicker.defaults, ...options };
+    Datepicker.registry.set(this.input, this);
 
     const today = new Date();
     this.state = new State<DatepickerState>({
@@ -405,6 +407,7 @@ export class Datepicker {
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
+    Datepicker.registry.delete(this.input);
     if (this.state.get('isOpen')) this.close('api');
     this.cleanupFns.forEach((fn) => fn());
     this.cleanupFns = [];
@@ -438,6 +441,11 @@ export class Datepicker {
     return Array.from(document.querySelectorAll<HTMLInputElement>(selector)).map(
       (el) => new Datepicker(el, JSON.parse(el.dataset['datepickerOptions'] ?? '{}')),
     );
+  }
+
+  static getInstance(el: HTMLInputElement | string): Datepicker | null {
+    const input = typeof el === 'string' ? document.querySelector<HTMLInputElement>(el) : el;
+    return input ? Datepicker.registry.get(input) ?? null : null;
   }
 
   static parse(text: string, format = 'YYYY-MM-DD'): Date | null {

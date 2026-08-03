@@ -76,11 +76,39 @@ new Datepicker(
 
 | Method | Returns | Description |
 |--------|---------|-------------|
+| `Datepicker.getInstance(el)` | `Datepicker \| null` | Return the existing instance attached to `el` (element or CSS selector), or `null` if none. |
 | `Datepicker.setDefaults(partial)` | `void` | Set global defaults applied to all new instances. |
 | `Datepicker.registerLocale(name, config)` | `void` | Register a custom locale. |
 | `Datepicker.autoInit(selector?)` | `Datepicker[]` | Init all matching elements. Default: `[data-datepicker]`. |
 | `Datepicker.parse(text, format?)` | `Date \| null` | Parse a date string. |
 | `Datepicker.format(date, format?)` | `string` | Format a date. |
+
+### `Datepicker.getInstance`
+
+Retrieves the `Datepicker` instance previously created on a given input element. Returns `null` if the element has no associated instance (not yet initialised, or already destroyed).
+
+```ts
+Datepicker.getInstance(el: HTMLInputElement | string): Datepicker | null
+```
+
+Useful when you need to control a datepicker from code that doesn't hold a reference to the original instance — for example inside a framework component, an event handler, or a third-party plugin.
+
+```ts
+// by CSS selector
+Datepicker.getInstance('#arrival')?.setValue('2026-09-01')
+
+// by element reference
+const input = document.querySelector<HTMLInputElement>('#arrival')!
+Datepicker.getInstance(input)?.open()
+
+// safe null-check
+const dp = Datepicker.getInstance('#arrival')
+if (dp) {
+  console.log(dp.getValue())
+}
+```
+
+The registry uses a `WeakMap` internally, so destroyed instances and detached elements are garbage-collected without any manual cleanup.
 
 ## Format tokens
 
