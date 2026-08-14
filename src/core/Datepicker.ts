@@ -86,6 +86,7 @@ export class Datepicker {
   private destroyed = false;
   private addedInputMode = false;
   private _suppressClose = false;
+  private _onChangePending = false;
   private static defaults: Partial<DatepickerOptions> = {};
   private static registry = new WeakMap<HTMLInputElement, Datepicker>();
 
@@ -238,6 +239,7 @@ export class Datepicker {
   }
 
   async close(reason: CloseReason = 'api'): Promise<void> {
+    if (this._onChangePending && reason !== 'api') return;
     if (!this.state.get('isOpen')) return;
     this.state.set('isOpen', false);
     this.input.setAttribute('aria-expanded', 'false');
@@ -565,8 +567,13 @@ export class Datepicker {
       prev,
     };
     if (this.opts.onChange) {
-      const result = await this.opts.onChange(formatted, event);
-      if (result === false) this._suppressClose = true;
+      this._onChangePending = true;
+      try {
+        const result = await this.opts.onChange(formatted, event);
+        if (result === false) this._suppressClose = true;
+      } finally {
+        this._onChangePending = false;
+      }
     }
     this.emitter.emit('vdp:change', event);
     dispatch(this.input, 'vdp:change', event);

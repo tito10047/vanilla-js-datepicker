@@ -653,3 +653,57 @@ describe('onChange async prevent close', () => {
     dp2.destroy();
   });
 });
+
+describe('onChange pending — outside click blocked', () => {
+  it('outside click during pending async onChange does not close calendar', async () => {
+    const inp = makeInput();
+    let resolveOnChange!: (v: false) => void;
+    const dp2 = new Datepicker(inp, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      onChange: () => new Promise<false>((res) => { resolveOnChange = res; }),
+    });
+    await dp2.open();
+
+    // click a date — onChange starts but doesn't resolve yet
+    document.querySelector<HTMLButtonElement>('button[data-date]')!.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    // simulate outside click while onChange is still pending
+    await dp2.close('outside' as any);
+    expect(dp2.isOpen()).toBe(true); // must still be open
+
+    // resolve onChange returning false → calendar should stay open
+    resolveOnChange(false);
+    await new Promise((r) => setTimeout(r, 10));
+    expect(dp2.isOpen()).toBe(true);
+
+    await dp2.close();
+    dp2.destroy();
+  });
+
+  it('outside click during pending async onChange (resolves void) closes after resolve', async () => {
+    const inp = makeInput();
+    let resolveOnChange!: () => void;
+    const dp2 = new Datepicker(inp, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      onChange: () => new Promise<void>((res) => { resolveOnChange = res; }),
+    });
+    await dp2.open();
+
+    document.querySelector<HTMLButtonElement>('button[data-date]')!.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    // outside click blocked while pending
+    await dp2.close('outside' as any);
+    expect(dp2.isOpen()).toBe(true);
+
+    // onChange resolves void → closeOnSelect fires → closes
+    resolveOnChange();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(dp2.isOpen()).toBe(false);
+
+    dp2.destroy();
+  });
+});

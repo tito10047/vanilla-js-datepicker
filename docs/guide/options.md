@@ -100,6 +100,25 @@ new Datepicker('#dp', {
 });
 ```
 
+**Outside-click / Escape protection while `onChange` is pending**
+
+While `onChange` is awaited (e.g. your handler shows a confirm dialog), the calendar is automatically protected from being closed by an outside click or the Escape key. Any such close attempt is silently blocked until `onChange` resolves. Only a programmatic `dp.close()` call will still work.
+
+This means you can safely show a modal or `confirm()` dialog inside `onChange` without the calendar disappearing under it:
+
+```js
+onChange: async (value, event) => {
+  try {
+    // Calendar stays open while the user decides in the dialog,
+    // even if they click outside the calendar.
+    await showConfirmDialog('Is this date correct?');
+  } catch {
+    dp.setValue('');
+    return false; // user cancelled — keep calendar open
+  }
+},
+```
+
 > **Note:** The value is already applied to the input before `onChange` is called. If validation fails and you want to also clear the value, call `dp.setValue('')` inside the handler before returning `false`.
 
 > **Difference from `onBeforeChange`:** `onBeforeChange` runs *before* the value is set and prevents the commit entirely. `onChange` runs *after* the value is set and can only prevent the calendar from closing — the value change itself has already happened.
