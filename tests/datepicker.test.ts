@@ -601,3 +601,55 @@ describe('static API', () => {
     expect(Datepicker.getInstance('#no-such-element')).toBeNull();
   });
 });
+
+// ─── onChange async + prevent close ──────────────────────────────────────────
+
+describe('onChange async prevent close', () => {
+  it('returning false from async onChange keeps calendar open', async () => {
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      onChange: async () => false,
+    });
+    await dp2.open();
+    const cell = document.querySelector<HTMLButtonElement>('button[data-date]')!;
+    cell.click();
+    await new Promise((r) => setTimeout(r, 20));
+    expect(dp2.isOpen()).toBe(true);
+    await dp2.close();
+    dp2.destroy();
+  });
+
+  it('returning void/undefined from async onChange closes calendar normally', async () => {
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      onChange: async () => { /* no return */ },
+    });
+    await dp2.open();
+    const cell = document.querySelector<HTMLButtonElement>('button[data-date]')!;
+    cell.click();
+    await new Promise((r) => setTimeout(r, 20));
+    expect(dp2.isOpen()).toBe(false);
+    dp2.destroy();
+  });
+
+  it('async onChange receives the selected value', async () => {
+    const inp = makeInput();
+    let received = '';
+    const dp2 = new Datepicker(inp, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      onChange: async (value) => { received = value; },
+    });
+    await dp2.open();
+    const cell = document.querySelector<HTMLButtonElement>('button[data-date]')!;
+    const dateStr = cell.getAttribute('data-date')!;
+    cell.click();
+    await new Promise((r) => setTimeout(r, 20));
+    expect(received).toBe(dateStr);
+    dp2.destroy();
+  });
+});

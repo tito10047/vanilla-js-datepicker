@@ -239,7 +239,7 @@ export interface DatepickerOptions {
 
   // Sync callbacks
   onClose?: (reason: CloseReason) => void;
-  onChange?: (value: string, e: DatepickerChangeEvent) => void;
+  onChange?: (value: string, e: DatepickerChangeEvent) => boolean | void | Promise<boolean | void>;
   onInput?: (rawValue: string) => void;
   onInvalid?: (err: DatepickerError) => void;
   onViewChange?: (view: CalendarView) => void;

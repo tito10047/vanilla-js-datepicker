@@ -85,6 +85,7 @@ export class Datepicker {
   private cleanupFns: (() => void)[] = [];
   private destroyed = false;
   private addedInputMode = false;
+  private _suppressClose = false;
   private static defaults: Partial<DatepickerOptions> = {};
   private static registry = new WeakMap<HTMLInputElement, Datepicker>();
 
@@ -154,7 +155,7 @@ export class Datepicker {
 
     // Wire option callbacks to internal emitter
     if (this.opts.onClose) this.emitter.on('vdp:close', ({ reason }: { reason: CloseReason }) => this.opts.onClose!(reason));
-    if (this.opts.onChange) this.emitter.on('vdp:change', (e: DatepickerChangeEvent) => this.opts.onChange!(e.value, e));
+    // onChange is called directly in emitChange (not via emitter) so its async result can prevent close
     if (this.opts.onInput) this.emitter.on('vdp:input', ({ raw }: { raw: string }) => this.opts.onInput!(raw));
     if (this.opts.onInvalid) this.emitter.on('vdp:invalid', (e: DatepickerError) => this.opts.onInvalid!(e));
     if (this.opts.onViewChange) this.emitter.on('vdp:viewchange', ({ to }: { to: CalendarView }) => this.opts.onViewChange!(to));
@@ -478,7 +479,8 @@ export class Datepicker {
     // NaN date = "clear" signal from the Clear footer button
     if (!isFinite(date.getTime())) {
       await this.applyValue(null);
-      if (this.opts.closeOnSelect ?? true) await this.close('select');
+      if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
+      this._suppressClose = false;
       return;
     }
 
@@ -490,7 +492,8 @@ export class Datepicker {
       const formatted = dates.map((d) => formatDate(d, this.opts.format!)).join(', ');
       this.input.value = formatted;
       this.state.set('rawValue', formatted);
-      this.emitChange(formatted, dates);
+      await this.emitChange(formatted, dates);
+      this._suppressClose = false;
       this.dropdown?.refresh();
       return;
     }
@@ -501,18 +504,20 @@ export class Datepicker {
         const formatted = `${formatDate(result.from, this.opts.format!)} – ${formatDate(result.to, this.opts.format!)}`;
         this.input.value = formatted;
         this.state.set('rawValue', formatted);
-        this.emitChange(formatted, result);
+        await this.emitChange(formatted, result);
         dispatch(this.input, 'vdp:rangeselect', result);
-        if (this.opts.closeOnSelect ?? true) await this.close('select');
+        if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
+        this._suppressClose = false;
       }
       this.dropdown?.refresh();
       return;
     }
 
-    // single mode
+    // single mode — emitChange is called inside applyValue (via setValue)
     await this.setValue(date);
     dispatch(this.input, 'vdp:dayselect', { date });
-    if (this.opts.closeOnSelect ?? true) await this.close('select');
+    if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
+    this._suppressClose = false;
   }
 
   private async handleMonthChange(year: number, month: number): Promise<void> {
@@ -548,17 +553,21 @@ export class Datepicker {
       currentMonth: date ? date.getMonth() : this.state.get('currentMonth'),
     });
 
-    this.emitChange(formatted, date ? startOfDay(date) : null, prev);
+    await this.emitChange(formatted, date ? startOfDay(date) : null, prev);
     this.dropdown?.refresh();
   }
 
-  private emitChange(formatted: string, value: DateValue, prev = ''): void {
+  private async emitChange(formatted: string, value: DateValue, prev = ''): Promise<void> {
     const event: DatepickerChangeEvent = {
       value: formatted,
       date: value,
       formatted,
       prev,
     };
+    if (this.opts.onChange) {
+      const result = await this.opts.onChange(formatted, event);
+      if (result === false) this._suppressClose = true;
+    }
     this.emitter.emit('vdp:change', event);
     dispatch(this.input, 'vdp:change', event);
   }

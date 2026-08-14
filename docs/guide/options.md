@@ -71,7 +71,7 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 | `onOpen` | `({ month, from, to }: OpenRange) => void \| Promise<void>` | Called once when calendar opens. `month` = 1st of displayed month; `from`/`to` = full visible grid range. Awaited before `onCellRender`. |
 | `onMonthChange` | `({ month, from, to }: OpenRange) => void \| Promise<void>` | Called on every month navigation (not on initial open). Same shape as `onOpen`. Awaited before `onCellRender`. |
 | `onClose` | `(reason: CloseReason) => void` | Called when calendar closes. |
-| `onChange` | `(value: string, event: DatepickerChangeEvent) => void` | Called when selected date changes. |
+| `onChange` | `(value: string, event: DatepickerChangeEvent) => boolean \| void \| Promise<boolean \| void>` | Called when selected date changes. Return `false` (or `Promise<false>`) to keep the calendar open — useful for async validation that fails after the value is set. |
 | `onInput` | `(raw: string) => void` | Called on every keystroke in the input. |
 | `onInvalid` | `(error: DatepickerError) => void` | Called when an invalid value is rejected. |
 | `onViewChange` | `(view: CalendarView) => void` | Called when the calendar view changes. |
@@ -81,6 +81,28 @@ All options are passed as the second argument to `new Datepicker(el, options)`.
 | `onBeforeChange` | `(next: Date, prev: Date \| null) => boolean \| Promise<boolean>` | Return `false` to cancel selection. |
 | `onBeforeMonthChange` | `(next: Date, prev: Date) => boolean \| Promise<boolean>` | Return `false` to cancel navigation. |
 | `validate` | `(date: Date) => boolean \| string \| Promise<boolean \| string>` | Custom validation; return `false` or error string to reject. |
+
+### Keeping the calendar open from `onChange`
+
+Return `false` (or a `Promise` resolving to `false`) from `onChange` to prevent the calendar from closing after a date is selected. This is useful when you run async validation after the value is committed and need to give the user a chance to correct their choice.
+
+```js
+new Datepicker('#dp', {
+  format: 'YYYY-MM-DD',
+  onChange: async (value, event) => {
+    const isValid = await myServerValidate(event.date);
+    if (!isValid) {
+      showError('This date is not available');
+      return false; // calendar stays open
+    }
+    // returning nothing (or void) closes the calendar normally
+  },
+});
+```
+
+> **Note:** The value is already applied to the input before `onChange` is called. If validation fails and you want to also clear the value, call `dp.setValue('')` inside the handler before returning `false`.
+
+> **Difference from `onBeforeChange`:** `onBeforeChange` runs *before* the value is set and prevents the commit entirely. `onChange` runs *after* the value is set and can only prevent the calendar from closing — the value change itself has already happened.
 
 ## Appearance
 

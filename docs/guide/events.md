@@ -27,7 +27,7 @@ input.addEventListener('vdp:change', (e) => {
 |-------|---------------|-------------|
 | `vdp:open` | `{ view }` | Dropdown opened. |
 | `vdp:close` | `{ reason }` | Dropdown closed. `reason`: `'select' \| 'escape' \| 'outside' \| 'cancel' \| 'confirm' \| 'api'` |
-| `vdp:change` | `{ value, date, formatted, prev }` | Selected value changed. |
+| `vdp:change` | `{ value, date, formatted, prev }` | Selected value changed. Note: returning `false` from this event has no effect on closing — use the `onChange` option instead. |
 | `vdp:input` | `{ raw }` | User typed in the input. |
 | `vdp:invalid` | `{ code, message, value }` | Invalid value rejected. `code`: `'INVALID_DATE' \| 'BELOW_MIN' \| 'ABOVE_MAX'` |
 | `vdp:viewchange` | `{ from, to }` | Calendar view switched (days / months / years). |
