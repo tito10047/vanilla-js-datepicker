@@ -47,6 +47,18 @@ describe('showTodayButton', () => {
     await dp.close();
     dp.destroy();
   });
+
+  it('clicking today button keeps calendar open even when closeOnSelect is true', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true });
+    await dp.open();
+    const btn = document.querySelector<HTMLButtonElement>('.vdp-btn-today')!;
+    btn.click();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(dp.isOpen()).toBe(true);
+    await dp.close();
+    dp.destroy();
+  });
 });
 
 // ─── showClearButton ──────────────────────────────────────────────────────────

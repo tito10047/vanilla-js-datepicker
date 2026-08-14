@@ -28,6 +28,7 @@ interface DatepickerState extends Record<string, unknown> {
 
 export interface DropdownCallbacks {
   onDateSelect: (date: Date) => Promise<void>;
+  onTodayClick: (date: Date) => Promise<void>;
   onMonthChange: (year: number, month: number) => Promise<void>;
   onViewChange: (view: CalendarView) => void;
   onClose: (reason: CloseReason) => void;
@@ -127,7 +128,7 @@ export class Dropdown {
 
     // Footer
     this.footerView = new FooterView(this.opts, locale, {
-      onToday: async () => { await this.callbacks.onDateSelect(startOfDay(new Date())); },
+      onToday: async () => { await this.callbacks.onTodayClick(startOfDay(new Date())); },
       onClear: async () => {
         this.pendingDate = null;
         await this.callbacks.onDateSelect(new Date(NaN));

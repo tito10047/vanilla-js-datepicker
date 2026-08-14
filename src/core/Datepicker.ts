@@ -214,6 +214,10 @@ export class Datepicker {
       onDateSelect: async (date) => {
         await this.handleDateSelect(date);
       },
+      onTodayClick: async (date) => {
+        await this.setValue(date);
+        this.dropdown?.refresh();
+      },
       onMonthChange: async (year, month) => {
         await this.handleMonthChange(year, month);
       },
