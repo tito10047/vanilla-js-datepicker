@@ -86,7 +86,7 @@ export class Dropdown {
 
     this.dayGridView = new DayGridView(this.opts, locale, {
       onDateClick: async (date) => {
-        if (this.opts.showConfirmButton) {
+        if (this.opts.showConfirmButton && !(this.opts.closeOnSelect ?? true)) {
           this.pendingDate = date;
           this.renderCurrentView();
           return;

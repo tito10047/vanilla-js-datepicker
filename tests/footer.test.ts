@@ -99,9 +99,9 @@ describe('showTodayButton', () => {
     dp.destroy();
   });
 
-  it('with showConfirmButton: after today, clicking a date highlights the pending date', async () => {
+  it('with showConfirmButton+closeOnSelect:false: after today, clicking a date highlights the pending date', async () => {
     const input = makeInput();
-    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true });
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true, closeOnSelect: false });
     await dp.open();
 
     document.querySelector<HTMLButtonElement>('.vdp-btn-today')!.click();
@@ -118,9 +118,9 @@ describe('showTodayButton', () => {
     dp.destroy();
   });
 
-  it('with showConfirmButton: today + date click + confirm applies the clicked date and closes', async () => {
+  it('with showConfirmButton+closeOnSelect:false: today + date click + confirm applies the clicked date and closes', async () => {
     const input = makeInput();
-    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true });
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true, closeOnSelect: false });
     await dp.open();
 
     document.querySelector<HTMLButtonElement>('.vdp-btn-today')!.click();
@@ -215,12 +215,13 @@ describe('showConfirmButton', () => {
     dp.destroy();
   });
 
-  it('with showConfirmButton, clicking a date does not immediately apply value', async () => {
+  it('with showConfirmButton and closeOnSelect:false, clicking a date does not immediately apply value', async () => {
     const input = makeInput();
     const dp = new Datepicker(input, {
       format: 'YYYY-MM-DD',
       openOnFocus: false,
       showConfirmButton: true,
+      closeOnSelect: false,
       value: '2026-07-15',
     });
     await dp.open();
@@ -233,6 +234,25 @@ describe('showConfirmButton', () => {
     // Value should still be the old value (not yet confirmed)
     expect(dp.getValue()).toBe('2026-07-15');
     await dp.close();
+    dp.destroy();
+  });
+
+  it('with showConfirmButton and closeOnSelect:true (default), clicking a date closes and applies immediately', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, {
+      format: 'YYYY-MM-DD',
+      openOnFocus: false,
+      showConfirmButton: true,
+      value: '2026-07-15',
+    });
+    await dp.open();
+
+    const cell = document.querySelector<HTMLButtonElement>('[data-date="2026-07-20"]')!;
+    cell.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(dp.isOpen()).toBe(false);
+    expect(dp.getValue()).toBe('2026-07-20');
     dp.destroy();
   });
 });
