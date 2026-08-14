@@ -283,10 +283,10 @@ describe('ARIA attributes', () => {
     document.body.innerHTML = '';
   });
 
-  it('input has role=combobox', () => {
+  it('input has role=presentation', () => {
     input = makeInput();
     dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false });
-    expect(input.getAttribute('role')).toBe('combobox');
+    expect(input.getAttribute('role')).toBe('presentation');
   });
 
   it('input has aria-haspopup=dialog', () => {

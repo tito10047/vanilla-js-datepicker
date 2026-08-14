@@ -122,7 +122,7 @@ export class Datepicker {
     this.input.setAttribute('data-1p-ignore', '');
     this.input.setAttribute('data-form-type', 'other');
     this.input.setAttribute('spellcheck', 'false');
-    this.input.setAttribute('role', 'combobox');
+    this.input.setAttribute('role', 'presentation');
     this.input.setAttribute('aria-haspopup', 'dialog');
     this.input.setAttribute('aria-expanded', 'false');
 

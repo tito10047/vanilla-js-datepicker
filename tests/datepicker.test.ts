@@ -44,8 +44,8 @@ describe('constructor', () => {
     expect(input.classList.contains('vdp-input')).toBe(true);
   });
 
-  it('sets role=combobox on input', () => {
-    expect(input.getAttribute('role')).toBe('combobox');
+  it('sets role=presentation on input', () => {
+    expect(input.getAttribute('role')).toBe('presentation');
   });
 
   it('sets aria-expanded=false initially', () => {

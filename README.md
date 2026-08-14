@@ -19,7 +19,7 @@ Lightweight, dependency-free date picker for vanilla JavaScript and TypeScript.
 - **Instant calendar render** — calendar appears immediately; `onCellRender` decorates cells asynchronously without blocking the UI.
 - **Range & multi-date selection** — `mode: 'range'` or `mode: 'multiple'`.
 - **Fully customizable CSS classes** — every DOM element's class is configurable via `classNames` option (Tailwind-friendly).
-- **Fully accessible** — ARIA `combobox`, `dialog`, `grid` roles; full keyboard navigation.
+- **Fully accessible** — ARIA `dialog`, `grid` roles; full keyboard navigation.
 - **CSS-variable theming** — light, dark, and auto (system) themes.
 - **Internationalization** — built-in SK, EN, CS, DE; register any custom locale.
 - **Multiple formats** — ESM, CommonJS, and UMD builds.
@@ -83,6 +83,12 @@ Live demo (12 interactive examples): [https://tito10047.github.io/vanilla-js-dat
   - [Async Cell Render](https://tito10047.github.io/vanilla-js-datepicker/cookbook/async-cell)
   - [Disabled Dates](https://tito10047.github.io/vanilla-js-datepicker/cookbook/disabled-dates)
   - [Inline Calendar](https://tito10047.github.io/vanilla-js-datepicker/cookbook/inline)
+
+---
+
+## Related
+
+Looking for a **time picker**? Check out [@tito10047/vanilla-js-timepicker](https://github.com/tito10047/vanilla-js-timepicker/) — a companion library with the same zero-dependency philosophy.
 
 ---
 
