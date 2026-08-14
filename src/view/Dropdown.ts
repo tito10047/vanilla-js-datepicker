@@ -201,7 +201,7 @@ export class Dropdown {
     const view = this.state.get('view');
     const year = this.state.get('currentYear');
     const month = this.state.get('currentMonth');
-    const selectedDate = this.state.get('selectedDate');
+    const selectedDate = this.pendingDate ?? this.state.get('selectedDate');
 
     this.bodyEl.innerHTML = '';
 

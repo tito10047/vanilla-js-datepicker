@@ -113,7 +113,7 @@ test.describe('clicking date cells', () => {
     expect(value).toContain('2026-08-20');
   });
 
-  test('today button selects today and closes calendar', async ({ page }) => {
+  test('today button selects today and keeps calendar open', async ({ page }) => {
     const input = page.locator('#dp-footer');
     await input.click();
 
@@ -123,11 +123,19 @@ test.describe('clicking date cells', () => {
     const todayBtn = dropdown.locator('.vdp-btn-today');
     await todayBtn.click();
 
-    // Should close and have today's date
-    await expect(dropdown).not.toBeVisible({ timeout: 2000 });
-    const value = await input.inputValue();
+    // Calendar must stay open after clicking Today
+    await expect(dropdown).toBeVisible({ timeout: 2000 });
     const today = new Date();
-    const expected = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    expect(value).toBe(expected);
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // Today's cell must be highlighted as selected
+    const todayCell = dropdown.locator(`[data-date="${todayStr}"]`);
+    await expect(todayCell).toHaveClass(/vdp-cell--selected/, { timeout: 2000 });
+
+    // Clicking a date (confirm flow for dp-footer which has showConfirmButton)
+    // confirms and closes the calendar
+    const confirmBtn = dropdown.locator('.vdp-btn-confirm');
+    await confirmBtn.click();
+    await expect(dropdown).not.toBeVisible({ timeout: 2000 });
   });
 });

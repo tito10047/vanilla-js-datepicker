@@ -59,6 +59,86 @@ describe('showTodayButton', () => {
     await dp.close();
     dp.destroy();
   });
+
+  it('after clicking today, clicking a date closes the calendar', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true });
+    await dp.open();
+
+    const todayBtn = document.querySelector<HTMLButtonElement>('.vdp-btn-today')!;
+    todayBtn.click();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(dp.isOpen()).toBe(true);
+
+    const cell = document.querySelector<HTMLButtonElement>('button[data-date]')!;
+    cell.click();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(dp.isOpen()).toBe(false);
+    dp.destroy();
+  });
+
+  it('after clicking today, clicking a date highlights it as selected', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, closeOnSelect: false });
+    await dp.open();
+
+    const todayBtn = document.querySelector<HTMLButtonElement>('.vdp-btn-today')!;
+    todayBtn.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const cells = document.querySelectorAll<HTMLButtonElement>('button[data-date]');
+    // pick a cell that's not today to make the change visible
+    const target = Array.from(cells).find(c => !c.classList.contains('vdp-cell--today')) ?? cells[0];
+    const dateStr = target.getAttribute('data-date')!;
+    target.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const selected = document.querySelector('.vdp-cell--selected');
+    expect(selected?.getAttribute('data-date')).toBe(dateStr);
+    await dp.close();
+    dp.destroy();
+  });
+
+  it('with showConfirmButton: after today, clicking a date highlights the pending date', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true });
+    await dp.open();
+
+    document.querySelector<HTMLButtonElement>('.vdp-btn-today')!.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const cells = document.querySelectorAll<HTMLButtonElement>('button[data-date]');
+    const nonToday = Array.from(cells).find(c => !c.classList.contains('vdp-cell--today'))!;
+    const dateStr = nonToday.getAttribute('data-date')!;
+    nonToday.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const selected = document.querySelector('.vdp-cell--selected');
+    expect(selected?.getAttribute('data-date')).toBe(dateStr);
+    dp.destroy();
+  });
+
+  it('with showConfirmButton: today + date click + confirm applies the clicked date and closes', async () => {
+    const input = makeInput();
+    const dp = new Datepicker(input, { format: 'YYYY-MM-DD', openOnFocus: false, showTodayButton: true, showConfirmButton: true });
+    await dp.open();
+
+    document.querySelector<HTMLButtonElement>('.vdp-btn-today')!.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const cells = document.querySelectorAll<HTMLButtonElement>('button[data-date]');
+    const nonToday = Array.from(cells).find(c => !c.classList.contains('vdp-cell--today'))!;
+    const dateStr = nonToday.getAttribute('data-date')!;
+    nonToday.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    document.querySelector<HTMLButtonElement>('.vdp-btn-confirm')!.click();
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(dp.isOpen()).toBe(false);
+    expect(dp.getValue()).toBe(dateStr);
+    dp.destroy();
+  });
 });
 
 // ─── showClearButton ──────────────────────────────────────────────────────────
