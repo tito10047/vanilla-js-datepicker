@@ -150,20 +150,36 @@ describe('getValue / setValue', () => {
     expect(input.value).toBe('');
   });
 
-  it('setValue fires vdp:change event', async () => {
+  it('setValue is silent by default (no vdp:change)', async () => {
     const handler = vi.fn();
     input.addEventListener('vdp:change', handler);
     await dp.setValue('2026-07-04');
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('setValue(value, true) fires vdp:change event', async () => {
+    const handler = vi.fn();
+    input.addEventListener('vdp:change', handler);
+    await dp.setValue('2026-07-04', true);
     expect(handler).toHaveBeenCalledOnce();
     const detail = (handler.mock.calls[0][0] as CustomEvent).detail;
     expect(detail.value).toBe('2026-07-04');
   });
 
-  it('setValue fires onChange callback', async () => {
+  it('setValue is silent by default (no onChange)', async () => {
     const onChange = vi.fn();
     const inp = makeInput();
     const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', onChange, openOnFocus: false });
     await dp2.setValue('2026-07-04');
+    expect(onChange).not.toHaveBeenCalled();
+    dp2.destroy();
+  });
+
+  it('setValue(value, true) fires onChange callback', async () => {
+    const onChange = vi.fn();
+    const inp = makeInput();
+    const dp2 = new Datepicker(inp, { format: 'YYYY-MM-DD', onChange, openOnFocus: false });
+    await dp2.setValue('2026-07-04', true);
     expect(onChange).toHaveBeenCalledWith('2026-07-04', expect.objectContaining({ value: '2026-07-04' }));
     dp2.destroy();
   });
@@ -486,7 +502,7 @@ describe('on / off', () => {
   it('on() subscribes to events', async () => {
     const handler = vi.fn();
     dp.on('vdp:change', handler);
-    await dp.setValue('2026-07-04');
+    await dp.setValue('2026-07-04', true);
     expect(handler).toHaveBeenCalledOnce();
   });
 
@@ -494,7 +510,7 @@ describe('on / off', () => {
     const handler = vi.fn();
     dp.on('vdp:change', handler);
     dp.off('vdp:change', handler);
-    await dp.setValue('2026-07-04');
+    await dp.setValue('2026-07-04', true);
     expect(handler).not.toHaveBeenCalled();
   });
 
@@ -502,7 +518,7 @@ describe('on / off', () => {
     const handler = vi.fn();
     const off = dp.on('vdp:change', handler);
     off();
-    await dp.setValue('2026-07-04');
+    await dp.setValue('2026-07-04', true);
     expect(handler).not.toHaveBeenCalled();
   });
 });

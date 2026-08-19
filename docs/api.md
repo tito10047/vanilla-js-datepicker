@@ -26,16 +26,32 @@ new Datepicker(
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `setValue(value)` | `Promise<void>` | Set value (string, Date, or null). Runs validation. |
+| `setValue(value, triggerChange?)` | `Promise<void>` | Set value (string, Date, or null). Runs validation. |
 | `getValue()` | `string` | Current formatted value. |
 | `getDate()` | `Date \| null` | Currently selected date (single mode). |
 | `getDates()` | `Date[]` | Selected dates (multiple mode). |
 | `getRange()` | `DateRange \| null` | Selected range (range mode). `DateRange = { from: Date, to: Date }` |
-| `setRange(from, to)` | `Promise<void>` | Set range programmatically (range mode). |
-| `setDates(dates)` | `Promise<void>` | Set multiple dates (multiple mode). |
-| `clear()` | `Promise<void>` | Clear all selections. |
-| `setToday()` | `Promise<void>` | Select today's date. |
+| `setRange(from, to, triggerChange?)` | `Promise<void>` | Set range programmatically (range mode). |
+| `setDates(dates, triggerChange?)` | `Promise<void>` | Set multiple dates (multiple mode). |
+| `clear(triggerChange?)` | `Promise<void>` | Clear all selections. |
+| `setToday(triggerChange?)` | `Promise<void>` | Select today's date. |
 | `isValid()` | `Promise<boolean>` | Validate current value. |
+
+#### Programmatic changes and `onChange`
+
+`setValue`, `setRange`, `setDates`, `clear` and `setToday` are **silent by default**: calling them from your own code does *not* fire `onChange` (or the `vdp:change` event). This mirrors how setting a native `input.value` from script never fires a `change` event, and matches flatpickr's `setDate(date, triggerChange)` convention — so inside `onChange` you never have to guess whether the update came from the user or from your own code, because your own code simply doesn't trigger it unless you ask it to.
+
+Pass `true` as the last argument to opt in and notify listeners same as a user-driven change would:
+
+```ts
+// silent — onChange is NOT called
+await dp.setValue('2026-09-01')
+
+// explicit opt-in — onChange IS called, just like a user pick
+await dp.setValue('2026-09-01', true)
+```
+
+Selections made by the user (clicking a day, the Today button, typing + blur, the Clear button) always notify — this flag only affects calls you make from your own code.
 
 ### Navigation
 

@@ -217,7 +217,7 @@ export class Datepicker {
         await this.handleDateSelect(date);
       },
       onTodayClick: async (date) => {
-        await this.setValue(date);
+        await this.setValue(date, true);
         this.dropdown?.refresh();
       },
       onMonthChange: async (year, month) => {
@@ -258,11 +258,11 @@ export class Datepicker {
     }
   }
 
-  async setValue(value: string | Date | null): Promise<void> {
+  async setValue(value: string | Date | null, triggerChange = false): Promise<void> {
     if (this.destroyed) return;
 
     if (value === null || value === '') {
-      if (this.opts.emptyOk) await this.applyValue(null);
+      if (this.opts.emptyOk) await this.applyValue(null, triggerChange);
       return;
     }
 
@@ -287,38 +287,38 @@ export class Datepicker {
 
     if (!dispatch(this.input, 'vdp:beforechange', { next: startOfDay(date), prev }, true)) return;
 
-    await this.applyValue(date);
+    await this.applyValue(date, triggerChange);
   }
 
-  async setRange(from: Date, to: Date): Promise<void> {
+  async setRange(from: Date, to: Date, triggerChange = false): Promise<void> {
     if (this.destroyed) return;
     this.rangeState.setRange(from, to);
     const formatted = `${formatDate(from, this.opts.format!)} – ${formatDate(to, this.opts.format!)}`;
     this.input.value = formatted;
     this.state.set('rawValue', formatted);
     const range: DateRange = { from: startOfDay(from), to: startOfDay(to) };
-    this.emitChange(formatted, range);
+    this.emitChange(formatted, range, undefined, triggerChange);
     this.dropdown?.refresh();
   }
 
-  async setDates(dates: Date[]): Promise<void> {
+  async setDates(dates: Date[], triggerChange = false): Promise<void> {
     if (this.destroyed) return;
     this.rangeState.setSelected(dates);
     const formatted = dates.map((d) => formatDate(d, this.opts.format!)).join(', ');
     this.input.value = formatted;
     this.state.set('rawValue', formatted);
-    this.emitChange(formatted, dates.map(startOfDay));
+    this.emitChange(formatted, dates.map(startOfDay), undefined, triggerChange);
     this.dropdown?.refresh();
   }
 
-  async clear(): Promise<void> {
+  async clear(triggerChange = false): Promise<void> {
     this.rangeState.clearRange();
     this.rangeState.clearSelected();
-    await this.applyValue(null);
+    await this.applyValue(null, triggerChange);
   }
 
-  async setToday(): Promise<void> {
-    await this.setValue(new Date());
+  async setToday(triggerChange = false): Promise<void> {
+    await this.setValue(new Date(), triggerChange);
   }
 
   async goToDate(date: Date): Promise<void> {
@@ -480,7 +480,7 @@ export class Datepicker {
   private async handleDateSelect(date: Date): Promise<void> {
     // NaN date = "clear" signal from the Clear footer button
     if (!isFinite(date.getTime())) {
-      await this.applyValue(null);
+      await this.applyValue(null, true);
       if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
       this._suppressClose = false;
       return;
@@ -494,7 +494,7 @@ export class Datepicker {
       const formatted = dates.map((d) => formatDate(d, this.opts.format!)).join(', ');
       this.input.value = formatted;
       this.state.set('rawValue', formatted);
-      await this.emitChange(formatted, dates);
+      await this.emitChange(formatted, dates, undefined, true);
       this._suppressClose = false;
       this.dropdown?.refresh();
       return;
@@ -506,7 +506,7 @@ export class Datepicker {
         const formatted = `${formatDate(result.from, this.opts.format!)} – ${formatDate(result.to, this.opts.format!)}`;
         this.input.value = formatted;
         this.state.set('rawValue', formatted);
-        await this.emitChange(formatted, result);
+        await this.emitChange(formatted, result, undefined, true);
         dispatch(this.input, 'vdp:rangeselect', result);
         if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
         this._suppressClose = false;
@@ -516,7 +516,7 @@ export class Datepicker {
     }
 
     // single mode — emitChange is called inside applyValue (via setValue)
-    await this.setValue(date);
+    await this.setValue(date, true);
     dispatch(this.input, 'vdp:dayselect', { date });
     if ((this.opts.closeOnSelect ?? true) && !this._suppressClose) await this.close('select');
     this._suppressClose = false;
@@ -543,7 +543,7 @@ export class Datepicker {
     await this.dropdown?.refresh();
   }
 
-  private async applyValue(date: Date | null): Promise<void> {
+  private async applyValue(date: Date | null, triggerChange = false): Promise<void> {
     const prev = this.state.get('rawValue');
     const formatted = date ? formatDate(date, this.opts.format!) : '';
     this.input.value = formatted;
@@ -555,11 +555,15 @@ export class Datepicker {
       currentMonth: date ? date.getMonth() : this.state.get('currentMonth'),
     });
 
-    await this.emitChange(formatted, date ? startOfDay(date) : null, prev);
+    await this.emitChange(formatted, date ? startOfDay(date) : null, prev, triggerChange);
     this.dropdown?.refresh();
   }
 
-  private async emitChange(formatted: string, value: DateValue, prev = ''): Promise<void> {
+  // Programmatic API calls (setValue/setRange/setDates/clear/setToday) are silent by
+  // default, mirroring native `input.value = x` and flatpickr's `setDate(date, triggerChange)`:
+  // scripted updates don't fire change notifications unless the caller opts in.
+  private async emitChange(formatted: string, value: DateValue, prev = '', triggerChange = false): Promise<void> {
+    if (!triggerChange) return;
     const event: DatepickerChangeEvent = {
       value: formatted,
       date: value,
@@ -617,7 +621,7 @@ export class Datepicker {
     if (!raw) return;
     const date = parseDate(raw, this.opts.format!);
     if (date) {
-      await this.setValue(date);
+      await this.setValue(date, true);
     } else if (this.opts.strictMode) {
       this.fireInvalid('INVALID_DATE', `"${raw}" is not a valid date`, raw);
     }
